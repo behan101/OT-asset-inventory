@@ -1,3 +1,4 @@
+# OT Asset Inventory, Vulnerability Identification, and Risk Prioritization in a Simulated Industrial Network
 
 ### Segmentation Rationale
 - IT and OT systems are isolated using Azure Network Security Groups (NSGs)
