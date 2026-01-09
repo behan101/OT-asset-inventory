@@ -1,0 +1,1 @@
+# OT-asset-inventory
