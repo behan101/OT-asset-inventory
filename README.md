@@ -38,6 +38,17 @@
 
 ---
 
+## Cloud Architecture
+
+Azure VNet
+├── IT-Subnet (10.0.1.0/24)
+│   └── VM1: IT / SOC / Monitoring
+│
+└── OT-Subnet (10.0.2.0/24)
+    └── VM2: OT Systems (PLC + HMI + SCADA simulated)
+
+---
+
 ## Lab Objectives
 
 - Build and maintain an OT asset inventory
