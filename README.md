@@ -1,4 +1,4 @@
-# OT Asset Inventory, Modbus Traffic Analysis & Risk Assessment
+# OT Asset Inventory: Modbus Traffic Analysis & Risk Assessment
 
 ### Segmentation Rationale
 - IT and OT systems are isolated using Azure Network Security Groups (NSGs)
