@@ -1,5 +1,11 @@
 # OpenPLC on OT VM Deployment
 
+## Local VM (OT Zone) Creation
+
+### Step 1: Install Ubuntu 22.04 LTS on the virtual machine.
+
+### Step 2: Install OT simulation tools
+
 After deploying the Azure VM with Ubuntu Server installed (ubuntu-24_04-lts), updates were made to patch the system:
 ```
 sudo apt update && sudo apt install
@@ -19,8 +25,19 @@ Set the current directory to `OpenPLC_v3`:
 cd OpenPLC_v3
 ```
 
-Run the installer using the proper parameters for your OS (Linux in this case):
+Run the installer for OpenPLC using the proper parameters for your OS (Linux in this case):
 ```
 ./install.sh linux
 ```
-Now is when you may way to start the deployment of your IT/SOC/SecOps VM (See https://github.com/behan101/OT-asset-inventory/blob/main/IT-SOC-SecOps-Deployment.md)
+
+Download and install Wireshark:
+```
+sudo apt install python3 python3-pip wireshark -y
+```
+
+Download and install pymodbus:
+```
+pip3 install pymodbus modbus-tk
+```
+
+### Step 3: Simulate PLC (Modbus Server)
