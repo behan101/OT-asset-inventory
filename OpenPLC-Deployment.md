@@ -14,7 +14,12 @@ Next, clone the OpenPLC repository with the following command:
 git clone https://github.com/thiagoralves/OpenPLC_v3.git
 ```
 
-Install using the proper parameters for your OS (Linux in this case):
+Set the current directory to `OpenPLC_v3`:
+```
+cd OpenPLC_v3
+```
+
+Run the installer using the proper parameters for your OS (Linux in this case):
 ```
 ./install.sh linux
 ```
