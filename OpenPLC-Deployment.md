@@ -30,7 +30,7 @@ Run the installer for OpenPLC using the proper parameters for your OS (Linux in 
 ./install.sh linux
 ```
 
-Download and install Wireshark:
+Confirm that you are in the in the home directory then download and install Wireshark. You may want to install Wireshark requiring superuser privileges or root access in order to capture packets for security purposes.
 ```
 sudo apt install python3 python3-pip wireshark -y
 ```
