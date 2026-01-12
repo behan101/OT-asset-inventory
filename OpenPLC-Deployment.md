@@ -18,3 +18,4 @@ Install using the proper parameters for your OS (Linux in this case):
 ```
 ./install.sh linux
 ```
+Now is when you may way to start the deployment of your IT/SOC/SecOps VM (See https://github.com/behan101/OT-asset-inventory/blob/main/IT-SOC-SecOps-Deployment.md)
