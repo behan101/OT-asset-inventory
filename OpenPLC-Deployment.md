@@ -35,15 +35,21 @@ Confirm that you are in the in the home directory then download and install Wire
 sudo apt install python3 python3-pip wireshark -y
 ```
 
-Be sure to create and use a virtual environment to isolate the project dependencies:
+Be sure to create and use a virtual environment to isolate the project dependencies. Name your environment to something recognizable. In my case, I used `ot-venv`.
 ```bash
-python3 -m venv ~/myenv
-source ~/myenv/bin/activate
+python3 -m venv ~/ot-venv
+source ~/ot-venv/bin/activate
 ```
 
 Download and install pymodbus:
 ```bash
 pip3 install pymodbus modbus-tk
+```
+
+After installations, update all dependencies with `sudo apt upgrade && sudo apt install`. You may want to make sure the version of python and pip are compatable using the following commands:
+```bash
+python3 --version
+pip3 --version
 ```
 
 ### Step 3: Simulate PLC (Modbus Server)
