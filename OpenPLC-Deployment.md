@@ -35,6 +35,12 @@ Confirm that you are in the in the home directory then download and install Wire
 sudo apt install python3 python3-pip wireshark -y
 ```
 
+Be sure to create and use a virtual environment to isolate the project dependencies:
+```
+python3 -m venv ~/myenv
+source ~/myenv/bin/activate
+```
+
 Download and install pymodbus:
 ```
 pip3 install pymodbus modbus-tk
