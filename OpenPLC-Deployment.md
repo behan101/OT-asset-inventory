@@ -47,3 +47,14 @@ pip3 install pymodbus modbus-tk
 ```
 
 ### Step 3: Simulate PLC (Modbus Server)
+
+Create a simple Modbus Server:
+```py
+from pymodbus.server.sync import StartTcpServer
+from pymodbus.datastore import ModbusSlaveContext, ModbusServerContext
+
+store = ModbusSlaveContext()
+context = ModbusServerContext(slaves=store, single=True)
+
+StartTcpServer(context, address=("0.0.0.0", 502))
+```
