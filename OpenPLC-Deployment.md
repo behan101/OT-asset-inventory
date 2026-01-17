@@ -59,7 +59,7 @@ Create a simple Modbus Server by using the Linux CLI to open the `modbus_server.
 nano modbus_server.py
 ```
 
-Then copy, paste, and write out the the Modbus Server Script for the OT VM:
+Then copy, paste, and write out the the Modbus Server Script for OT VM:
 ```py
 from pymodbus.server.sync import StartTcpServer
 from pymodbus.datastore import ModbusSlaveContext, ModbusServerContext
