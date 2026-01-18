@@ -61,24 +61,39 @@ nano modbus_server.py
 
 Then copy, paste, and write out the the Modbus Server Script for OT VM:
 ```py
-from pymodbus.server.sync import StartTcpServer
-from pymodbus.datastore import ModbusSlaveContext, ModbusServerContext
-from pymodbus.datastore import ModbusSequentialDataBlock
-
-store = ModbusSlaveContext(
-    di=ModbusSequentialDataBlock(0, [0]*50),
-    co=ModbusSequentialDataBlock(0, [0]*50),
-    hr=ModbusSequentialDataBlock(0, [120]*50),
-    ir=ModbusSequentialDataBlock(0, [0]*50)
+from pymodbus.server import StartTcpServer
+from pymodbus.datastore import (
+    ModbusSequentialDataBlock,
+    ModbusServerContext,
 )
+import logging
 
-context = ModbusServerContext(slaves=store, single=True)
+logging.basicConfig()
+log = logging.getLogger()
+log.setLevel(logging.INFO)
 
-print("OT Modbus PLC simulation running on TCP/502")
-StartTcpServer(context, address=("0.0.0.0", 502))
+# Create Modbus data blocks
+datastore = {
+    "di": ModbusSequentialDataBlock(0, [1] * 10),     # Discrete Inputs
+    "co": ModbusSequentialDataBlock(0, [0] * 10),     # Coils
+    "hr": ModbusSequentialDataBlock(0, [100] * 10),   # Holding Registers
+    "ir": ModbusSequentialDataBlock(0, [200] * 10),   # Input Registers
+}
+
+# NOTE: datastore passed POSITIONALLY (important)
+context = ModbusServerContext(datastore, single=True)
+
+log.info("Starting Modbus TCP Server on port 502")
+
+StartTcpServer(
+    context=context,
+    address=("0.0.0.0", 502)
+)
 ```
 
 Start the Modbus Server:
 ```bash
 sudo python3 modbus_server.py
 ```
+There should be validation and confirmation that the server is now running on port 502.
+
