@@ -98,3 +98,50 @@ sudo python3 modbus_server.py
 ```
 There should be validation and confirmation that the server is now running on port 502.
 
+After confirmation that the server is running, open another terminal (ctrl+alt+2 on Linux Server) and logon to your ot-venv. Once you are logged in, create a new file with the following command:
+```bash
+nano modbus_client.py
+```
+
+This should open up a script for the `modbus_client.py` file. Add the following to the file and write out to save the changes:
+```py
+from pymodbus.client import ModbusTcpClient
+import time
+
+client = ModbusTcpClient("127.0.0.1", port=502)
+
+if not client.connect():
+    print("Failed to connect to Modbus server")
+    exit(1)
+
+print("Connected to Modbus server")
+
+# Read holding registers (NEW SYNTAX)
+rr = client.read_holding_registers(0, count=5)
+print("Holding Registers:", rr.registers)
+
+# Write to a holding register (simulated attack)
+client.write_register(1, 999)
+
+time.sleep(1)
+
+# Read again
+rr = client.read_holding_registers(0, count=5)
+print("Holding Registers after write:", rr.registers)
+
+client.close()
+```
+In terminal 2 (modbus_client terminal), run the client with:
+```bash
+sudo ot-venv/bind/python modbus_client.py
+```
+The output should read:
+```bash
+Holding Registers: [100, 100, 100, 100, 100]
+Holding Registers after write: [100, 999, 100, 100, 100]
+```
+
+If you have connectivity problems, check terminal 1 (modbus_server terminal) and make sure the server is on. You can terminate the server using ctrl+c while in the server terminal.
+
+Note: This project uses pymodbus 3.12.x, python 3.12.3, and pip 24.0. There may be API changes and be subject to pymodbus API fragmentation. You may need to read documentation on API changes at https://pymodbus.readthedocs.io/en/latest/source/api_changes.html.
+
