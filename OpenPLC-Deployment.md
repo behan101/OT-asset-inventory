@@ -99,7 +99,7 @@ sudo python3 modbus_server.py
 ```
 There should be validation and confirmation that the server is now running on port 502.
 
-After confirmation that the server is running, open another terminal (ctrl+alt+2 on Linux Server) and logon to your ot-venv. Once you are logged in, create a new file with the following command:
+After confirmation that the server is running, open another terminal (ctrl+alt+2 on Linux Server) and logon to your ot-venv. You can navigate from terminal 1 and 2 by using alt+f1 (terminal 1) and alt+f2 (terminal 2). Once you are logged in, create a new file with the following command:
 ```bash
 nano modbus_client.py
 ```
@@ -117,7 +117,7 @@ if not client.connect():
 
 print("Connected to Modbus server")
 
-# Read holding registers (NEW SYNTAX)
+# Read holding registers
 rr = client.read_holding_registers(0, count=5)
 print("Holding Registers:", rr.registers)
 
