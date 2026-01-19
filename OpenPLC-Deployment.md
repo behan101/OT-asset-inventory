@@ -1,6 +1,7 @@
 # OpenPLC on OT VM Deployment
 
 ## Local VM (OT Zone) Creation
+In this project, I used VirtualBox (https://www.virtualbox.org/) for the OT Subnet. Any virtual machine should perform similarly. If you have access to two or more virtual machines on the cloud, I would recommend you use those resources if you do not wish to run a local VM. At the time of creating this project, I only had access to one Azure virtual machine so I had to improvise using a local VM.
 
 ### Step 1: Install Ubuntu 22.04 LTS on the virtual machine.
 
