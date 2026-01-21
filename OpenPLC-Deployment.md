@@ -99,7 +99,7 @@ sudo python3 modbus_server.py
 ```
 There should be validation and confirmation that the server is now running on port 502.
 
-After confirmation that the server is running, open another terminal (ctrl+alt+2 on Linux Server) and logon to your ot-venv. You can navigate from terminal 1 and 2 by using alt+f1 (terminal 1) and alt+f2 (terminal 2). Once you are logged in, create a new file with the following command:
+After confirmation that the server is running, open another terminal (ctrl+alt+2 on Linux Server) and logon to your ot-venv. You can navigate from terminal 1 and 2 by using `alt+f1` (terminal 1) and `alt+f2` (terminal 2). Once you are logged in, create a new file with the following command:
 ```bash
 nano modbus_client.py
 ```
@@ -142,7 +142,7 @@ Holding Registers: [100, 100, 100, 100, 100]
 Holding Registers after write: [100, 999, 100, 100, 100]
 ```
 
-If you have connectivity problems, check terminal 1 (modbus_server terminal) and make sure the server is on. You can terminate the server using ctrl+c while in the server terminal.
+If you have connectivity problems, check terminal 1 (modbus_server terminal) and make sure the server is on. You can terminate the server using `ctrl+c` while in the server terminal.
 
 Note: This project uses pymodbus 3.12.x, python 3.12.3, and pip 24.0. There may be API changes and be subject to pymodbus API fragmentation. You may need to read documentation on API changes at https://pymodbus.readthedocs.io/en/latest/source/api_changes.html.
 
