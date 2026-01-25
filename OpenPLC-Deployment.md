@@ -5,6 +5,8 @@ In this project, I used VirtualBox (https://www.virtualbox.org/) for the OT Subn
 
 ### Step 1: Install Ubuntu 22.04 LTS on the virtual machine.
 
+I installed a headless (No GUI) installation of Ubuntu Server due to preference. This project will be based on this installation and may differ from GUI installation versions.
+
 ### Step 2: Install OT simulation tools
 
 After deploying the Azure VM with Ubuntu Server installed (ubuntu-24_04-lts), updates were made to patch the system:
@@ -31,18 +33,13 @@ Run the installer for OpenPLC using the proper parameters for your OS (Linux in 
 ./install.sh linux
 ```
 
-Confirm that you are in the in the home directory then download and install Wireshark. You may want to install Wireshark requiring superuser privileges or root access in order to capture packets for security purposes.
-```bash
-sudo apt install python3 python3-pip wireshark -y
-```
-
 Be sure to create and use a virtual environment to isolate the project dependencies. Name your environment to something recognizable. In my case, I used `ot-venv`.
 ```bash
 python3 -m venv ~/ot-venv
 source /ot-venv/bin/activate
 ```
 
-Download and install pymodbus:
+While in the new `ot-venv`, download and install pymodbus:
 ```bash
 pip3 install pymodbus modbus-tk
 ```
@@ -53,7 +50,7 @@ python3 --version
 pip3 --version
 ```
 
-### Step 3: Simulate PLC (Modbus Server)
+### Step 3: Simulate PLC (Programmable Logic Controller) / HMI (Human-Machine Interface) / SCADA (Supervisory Control and Data Acquisition) with Modbus Server
 
 Create a simple Modbus Server by using the Linux CLI to open the `modbus_server.py` file using nano:
 ```bash
@@ -192,3 +189,28 @@ We now have three logical OT Assets and have a fully simulated OT environment.
 | PLC-01   | modbus_server.py  | Serves registers |
 | HMI-01   | modbus_client.py  | Reads + writes   |
 | SCADA-01 | polling_client.py | Constant polling |
+
+### Step 4: Create Controlled Traffic Scenarios
+
+#### Scenario A: Normal Operations (Baseline)
+1. Start the PLC server (modbus_server.py)
+2. Start SCADA polling client (polling_client.py)
+3. Let it run for 2-5 minutes
+4. Do not run the HMI write script (modbus_client.py)
+
+This scenario should result in clean Modbus reads with predictable polling and no register changes.
+
+#### Scenario B: Operator Activity (Legitimate Write)
+Modify the HMI script slightly (modbus_client.py):
+```py
+# legitimate operator write
+client.write_register(1, 120)
+```
+Run this script one time. This will simulate a normal process adjustment and an authorized register write.
+
+#### Scenario C: Attack Simulation (Unauthorized Write)
+The existing logic:
+```py
+client.write_register(1, 999)
+```
+This simulates malicious or an unsafe write and process manipulation.
