@@ -102,7 +102,7 @@ sudo ot-venv/bin/python modbus_server.py
 ```
 There should be validation and confirmation that the server is now running on port 502.
 
-After confirmation that the server is running, open another terminal (ctrl+alt+2 on Linux Server) and logon to your ot-venv. You can navigate from terminal 1 and 2 by using `alt+f1` (terminal 1) and `alt+f2` (terminal 2). Once you are logged in, create a new file with the following command:
+After confirmation that the server is running, open another terminal using `CTRL+ALT+F2` on Linux Ubuntu Server, and logon to your ot-venv. You can navigate from terminal 1 and 2 by using `ALT+F1` (terminal 1) and `ALT+F2` (terminal 2). Once you are logged in, create a new file with the following command:
 ```bash
 nano modbus_client.py
 ```
