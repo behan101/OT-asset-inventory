@@ -137,7 +137,7 @@ client.close()
 ```
 In terminal 2 (modbus_client terminal), run the client with:
 ```bash
-sudo ot-venv/bind/python modbus_client.py
+sudo ot-venv/bin/python modbus_client.py
 ```
 The output should read:
 ```bash
