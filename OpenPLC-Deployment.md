@@ -39,7 +39,7 @@ sudo apt install python3 python3-pip wireshark -y
 Be sure to create and use a virtual environment to isolate the project dependencies. Name your environment to something recognizable. In my case, I used `ot-venv`.
 ```bash
 python3 -m venv ~/ot-venv
-source ~/ot-venv/bin/activate
+source /ot-venv/bin/activate
 ```
 
 Download and install pymodbus:
