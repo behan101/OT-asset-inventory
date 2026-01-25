@@ -149,3 +149,46 @@ If you have connectivity problems, check terminal 1 (modbus_server terminal) and
 
 Note: This project uses pymodbus 3.12.x, python 3.12.3, and pip 24.0. There may be API changes and be subject to pymodbus API fragmentation. You may need to read documentation on API changes at https://pymodbus.readthedocs.io/en/latest/source/api_changes.html.
 
+Now that the server and client are running properly, we need to simulate traffic using a script. Open a third terminal using `CTRL+ALT+F3`, then create a file called `polling_client.py` using the following command:
+```bash
+nano polling_client.py
+```
+Write out the following script in the new polling_client.py file:
+```py
+from pymodbus.client import ModbusTcpClient
+import time
+
+client = ModbusTcpClient("127.0.0.1", port=502)
+
+if not client.connect():
+    print("Failed to connect to Modbus server")
+    exit(1)
+
+print("SCADA connected to PLC")
+
+while True:
+    rr = client.read_holding_registers(0, count=5)
+    if rr.isError():
+        print("Read error")
+    else:
+        print("SCADA Poll:", rr.registers)
+
+    time.sleep(3)
+```
+
+Now start the OT-ENV and run the polling_client:
+```bash
+source ~/ot-venv/bin/activate
+python polling_client.py
+```
+If setup correctly, the command line should return the following with an interval of three seconds:
+```bash
+SCADA Poll: [100, 999, 100, 100, 100]
+```
+
+We now have three logical OT Assets and have a fully simulated OT environment.
+| Asset    | Script            | Behavior         |
+| -------- | ----------------- | ---------------- |
+| PLC-01   | modbus_server.py  | Serves registers |
+| HMI-01   | modbus_client.py  | Reads + writes   |
+| SCADA-01 | polling_client.py | Constant polling |
