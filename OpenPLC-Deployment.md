@@ -89,7 +89,10 @@ context = ModbusServerContext(device, single=True)
 # Start Modbus TCP Server
 log.info("Starting Modbus TCP Server on port 502")
 
-StartTcpServer(context=context, address=("0.0.0.0", 502))
+StartTcpServer(
+    context=context,
+    address=("0.0.0.0", 502)
+)
 
 ```
 
