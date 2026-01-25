@@ -98,7 +98,7 @@ StartTcpServer(
 
 Start the Modbus Server:
 ```bash
-sudo python3 modbus_server.py
+sudo ot-venv/bin/python modbus_server.py
 ```
 There should be validation and confirmation that the server is now running on port 502.
 
