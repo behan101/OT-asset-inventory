@@ -1,21 +1,21 @@
 # OpenPLC on OT VM Deployment
 
 # Index
-- Overview
-- Architecture
-- Tooling Versions
-- Step 1: Install Ubuntu 22.04 LTS on the OT VM
-- Step 2: Install OT Simulation Tools
-- Step 3: Create a Python Virtual Environment
-- Step 4: Simulate a PLC Using a Modbus TCP Server
-- Step 5: Simulate an HMI (Client)
-- Step 6: Simulate a SCADA System (Baseline Polling)
-- Logical OT Assets
-- Step 7: Controlled Traffic Scenarios
-    - Scenario A - Normal Operations (Baseline)
-    - Scenario B - Operator Activity (Legitimate Write)
-    - Scenario C - Attack Simulation (Unauthorized Write)
-    - Scenario D - Misconfigured or Rogue Behavior (Optional)
+- [Overview](#overview)
+- [Architecture](#architecture)
+- [Tooling Versions](#tooling-versions)
+- [Step 1: Install Ubuntu 22.04 LTS on the OT VM](#step-1-install-ubuntu-2204-lts-on-the-ot-vm)
+- [Step 2: Install OT Simulation Tools](#step-2-install-ot-simulation-tools)
+- [Step 3: Create a Python Virtual Environment](#step-3-create-a-python-virtual-environment)
+- [Step 4: Simulate a PLC Using a Modbus TCP Server](#step-4-simulate-a-plc-using-a-modbus-tcp-server)
+- [Step 5: Simulate an HMI (Client)](#step-5-simulate-an-hmi-client)
+- [Step 6: Simulate a SCADA System (Baseline Polling)](#step-6-simulate-a-scada-system-baseline-polling)
+- [Logical OT Assets](#logical-ot-assets)
+- [Step 7: Controlled Traffic Scenarios](#scenario-a--normal-operations-baseline)
+    - [Scenario A - Normal Operations (Baseline)](#scenario-b--operator-activity-legitimate-write)
+    - [Scenario B - Operator Activity (Legitimate Write)](#scenario-b--operator-activity-legitimate-write)
+    - [Scenario C - Attack Simulation (Unauthorized Write)](#scenario-c--attack-simulation-unauthorized-write)
+    - [Scenario D - Misconfigured or Rogue Behavior (Optional)](#scenario-d--misconfigured-or-rogue-behavior-optional)
 
 ---
 
