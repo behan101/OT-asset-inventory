@@ -166,8 +166,11 @@ print("Connected to Modbus server")
 rr = client.read_holding_registers(0, count=5)
 print("Holding Registers:", rr.registers)
 
+# Write to a holding register (legitimate operator value)
+client.write_register(1, 120)
+
 # Write to a holding register (simulated attack)
-client.write_register(1, 999)
+#client.write_register(1, 999)
 
 time.sleep(1)
 
@@ -274,6 +277,7 @@ Although all components run on one VM, they are treated as independent OT assets
 
 ### Scenario B — Operator Activity (Legitimate Write)
 
+#### Step B1: Modify the HMI Script
 Modify the HMI script to simulate a normal operator adjustment.
 
 **Change only this line** in `modbus_client.py`:
@@ -301,6 +305,31 @@ sudo ~/ot-venv/bin/python modbus_client.py
 SCADA Poll: [100, 120, 100, 100, 100]
 ```
 
+#### B2: Run Scenario B
+Make sure the following are running:
+* Terminal 1 (PLC)
+```bash
+sudo ~/ot-venv/bin/python modbus_server.py
+```
+* Terminal 3 (SCADA)
+```bash
+python polling_client.py
+```
+Then run the HMI Script once:
+```bash
+sudo ~/ot-venv/bin/python modbus_client.py
+```
+**Expected HMI output**:
+```bash
+Holding Registers: [100, 100, 100, 100, 100]
+Holding Registers after write: [100, 120, 100, 100, 100]
+```
+
+**Expected SCADA output**:
+```bash
+SCADA Poll: [100, 120, 100, 100, 100]
+```
+
 ---
 
 ### Scenario C — Attack Simulation (Unauthorized Write)
@@ -310,6 +339,7 @@ Revert the HMI script to the attack value:
 ```python
 client.write_register(1, 999)
 ```
+You can simply comment out the legitimate operator value and remove the hash `#` on the simulated attack register to run the script as a simulated attack.
 
 Run the script once:
 
@@ -366,3 +396,4 @@ sudo ~/ot-venv/bin/python noisy_client.py
 * Unstable automation logic
 
 ---
+
