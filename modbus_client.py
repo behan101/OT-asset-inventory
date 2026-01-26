@@ -13,8 +13,11 @@ print("Connected to Modbus server")
 rr = client.read_holding_registers(0, count=5)
 print("Holding Registers:", rr.registers)
 
+# Write to a holding register (legitimate operator value)
+client.write_register(1, 120)
+
 # Write to a holding register (simulated attack)
-client.write_register(1, 999)
+#client.write_register(1, 999)
 
 time.sleep(1)
 
