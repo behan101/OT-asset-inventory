@@ -1,17 +1,50 @@
 # OpenPLC on OT VM Deployment
 
-## Local VM (OT Zone) Creation
+# Index
+- Overview
+- Architecture
+- Tooling Versions
+- Step 1: Install Ubuntu 22.04 LTS on the OT VM
+- Step 2: Install OT Simulation Tools
+- Step 3: Create a Python Virtual Environment
+- Step 4: Simulate a PLC Using a Modbus TCP Server
+- Step 5: Simulate an HMI (Client)
+- Step 6: Simulate a SCADA System (Baseline Polling)
+- Logical OT Assets
+- Step 7: Controlled Traffic Scenarios
+    - Scenario A - Normal Operations (Baseline)
+    - Scenario B - Operator Activity (Legitimate Write)
+    - Scenario C - Attack Simulation (Unauthorized Write)
+    - Scenario D - Misconfigured or Rogue Behavior (Optional)
 
-In this project, I used VirtualBox ([https://www.virtualbox.org/](https://www.virtualbox.org/)) to host the **OT Zone**. Any hypervisor or cloud VM would work similarly. Because my Azure subscription only allowed a single VM, I implemented a **hybrid architecture**:
+---
 
-* Local VM → OT systems (PLC / HMI / SCADA)
-* Azure VM → IT-SOC and monitoring (added later)
+# Overview
+This document describes how to deploy a small OT simulation environment using:
+* A Modbus TCP–based PLC
+* An HMI client
+* A SCADA polling client
+
+The environment is used to generate realistic OT network traffic for:
+* Asset discovery
+* Baseline behavior analysis
+* Detection engineering
+* SOC alert testing
+
+---
+
+# Architecture
+In this project, I used VirtualBox (https://www.virtualbox.org/) to host the OT Zone. Any hypervisor or cloud VM would work similarly. Because my Azure subscription only allowed a single VM, I implemented a hybrid architecture:
+
+Local VM → OT systems (PLC / HMI / SCADA)
+
+Azure VM → IT-SOC and monitoring (added later)
 
 This document covers only the **OT-side deployment and traffic simulation**.
 
 ---
 
-## Tooling Versions
+# Tooling Versions
 
 * Python: 3.12.x
 * pip: 24.x
@@ -21,13 +54,13 @@ Note: API changes may affect compatibility. Refer to the pymodbus API change log
 
 ---
 
-## Step 1: Install Ubuntu 22.04 LTS on the OT VM
+# Step 1: Install Ubuntu 22.04 LTS on the OT VM
 
 A headless (no-GUI) installation of **Ubuntu Server 22.04 LTS** was used for the OT VM. All tooling and scripts below assume this environment.
 
 ---
 
-## Step 2: Install OT Simulation Tools
+# Step 2: Install OT Simulation Tools
 
 Patch the system:
 
@@ -56,7 +89,7 @@ Install OpenPLC:
 
 ---
 
-## Step 3: Create a Python Virtual Environment
+# Step 3: Create a Python Virtual Environment
 
 Create and activate a dedicated virtual environment to isolate OT dependencies:
 
@@ -80,7 +113,7 @@ pip --version
 
 ---
 
-## Step 4: Simulate a PLC Using a Modbus TCP Server
+# Step 4: Simulate a PLC Using a Modbus TCP Server
 
 Create the server script:
 
@@ -136,7 +169,7 @@ INFO:root:Starting Modbus TCP Server on port 502
 
 ---
 
-## Step 5: Simulate an HMI (Client)
+# Step 5: Simulate an HMI (Client)
 
 Open a second terminal (`CTRL+ALT+F2`) and activate the venv:
 
@@ -199,7 +232,7 @@ Holding Registers after write: [100, 100, 100, 100, 100]
 
 ---
 
-## Step 6: Simulate a SCADA System (Baseline Polling)
+# Step 6: Simulate a SCADA System (Baseline Polling)
 
 Open a third terminal (`CTRL+ALT+F3`) and activate the venv:
 
@@ -249,7 +282,7 @@ SCADA Poll: [100, 100, 100, 100, 100]
 
 ---
 
-## Logical OT Assets
+# Logical OT Assets
 
 Although all components run on one VM, they are treated as independent OT assets for inventory and risk analysis:
 
@@ -261,9 +294,9 @@ Although all components run on one VM, they are treated as independent OT assets
 
 ---
 
-## Step 7: Controlled Traffic Scenarios
+# Step 7: Controlled Traffic Scenarios
 
-### Scenario A — Normal Operations (Baseline)
+## Scenario A — Normal Operations (Baseline)
 
 1. Start the PLC server (`modbus_server.py`)
 2. Start the SCADA polling client (`polling_client.py`)
@@ -291,9 +324,9 @@ Stop and restart the Modbus server (modbus_server.py). This reinitializes all re
 
 ---
 
-### Scenario B — Operator Activity (Legitimate Write)
+## Scenario B — Operator Activity (Legitimate Write)
 
-#### Step B1: Modify the HMI Script
+### Step B1: Modify the HMI Script
 Modify the HMI script to simulate a normal operator adjustment.
 
 **Change only this line** in `modbus_client.py`:
@@ -321,7 +354,7 @@ sudo ~/ot-venv/bin/python modbus_client.py
 SCADA Poll: [100, 120, 100, 100, 100]
 ```
 
-#### B2: Run Scenario B
+### B2: Run Scenario B
 Make sure the following are running:
 * Terminal 1 (PLC)
 ```bash
@@ -348,7 +381,7 @@ SCADA Poll: [100, 120, 100, 100, 100]
 
 ---
 
-### Scenario C — Attack Simulation (Unauthorized Write)
+## Scenario C — Attack Simulation (Unauthorized Write)
 
 Revert the HMI script to the attack value:
 
@@ -377,7 +410,7 @@ SCADA Poll: [100, 999, 100, 100, 100]
 
 ---
 
-### Scenario D — Misconfigured or Rogue Behavior (Optional)
+## Scenario D — Misconfigured or Rogue Behavior (Optional)
 
 This simulates a compromised HMI, malware, or faulty automation logic.
 
