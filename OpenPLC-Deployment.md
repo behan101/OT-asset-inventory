@@ -166,11 +166,14 @@ print("Connected to Modbus server")
 rr = client.read_holding_registers(0, count=5)
 print("Holding Registers:", rr.registers)
 
+# Write to a holding register (baseline)
+client.write_register(1, 100)
+
 # Write to a holding register (legitimate operator value)
-client.write_register(1, 120)
+# client.write_register(1, 120)
 
 # Write to a holding register (simulated attack)
-#client.write_register(1, 999)
+# client.write_register(1, 999)
 
 time.sleep(1)
 
@@ -178,7 +181,7 @@ time.sleep(1)
 rr = client.read_holding_registers(0, count=5)
 print("Holding Registers after write:", rr.registers)
 
-client.close()
+client.close
 ```
 
 Run the HMI script:
@@ -187,11 +190,11 @@ Run the HMI script:
 sudo ~/ot-venv/bin/python modbus_client.py
 ```
 
-Expected output:
+Expected output (Baseline):
 
 ```
 Holding Registers: [100, 100, 100, 100, 100]
-Holding Registers after write: [100, 999, 100, 100, 100]
+Holding Registers after write: [100, 100, 100, 100, 100]
 ```
 
 ---
@@ -265,13 +268,26 @@ Although all components run on one VM, they are treated as independent OT assets
 1. Start the PLC server (`modbus_server.py`)
 2. Start the SCADA polling client (`polling_client.py`)
 3. Let it run for 2–5 minutes
-4. Do **not** run the HMI script
+4. Do **not** run the HMI script.
 
 **Expected behavior**:
 
 * Repeated Modbus read requests
 * No register value changes
 * Predictable polling intervals
+
+**Restoring Baseline State**:
+If the HMI script was previously executed and register values were modified, the baseline state can be restored using one of the following methods:
+
+Method 1 — Operator Reset (Preferred)
+Modify the HMI script to write the original baseline value:
+```py
+client.write_register(1, 100)
+```
+This can be done by removing the comment hash on the desired line and adding comment hashes on the other scenarios. Run the script once to restore the register to its initial value.
+
+Method 2 — PLC Restart
+Stop and restart the Modbus server (modbus_server.py). This reinitializes all registers to their default values.
 
 ---
 
