@@ -1,64 +1,94 @@
 # OpenPLC on OT VM Deployment
 
 ## Local VM (OT Zone) Creation
-In this project, I used VirtualBox (https://www.virtualbox.org/) for the OT Subnet. Any virtual machine should perform similarly. If you have access to two or more virtual machines on the cloud, I would recommend you use those resources if you do not wish to run a local VM. At the time of creating this project, I only had access to one Azure virtual machine so I had to improvise using a local VM.
 
-### Step 1: Install Ubuntu 22.04 LTS on the virtual machine.
+In this project, I used VirtualBox ([https://www.virtualbox.org/](https://www.virtualbox.org/)) to host the **OT Zone**. Any hypervisor or cloud VM would work similarly. Because my Azure subscription only allowed a single VM, I implemented a **hybrid architecture**:
 
-I installed a headless (No GUI) installation of Ubuntu Server due to preference. This project will be based on this installation and may differ from GUI installation versions.
+* Local VM → OT systems (PLC / HMI / SCADA)
+* Azure VM → IT-SOC and monitoring (added later)
 
-### Step 2: Install OT simulation tools
+This document covers only the **OT-side deployment and traffic simulation**.
 
-After deploying the Azure VM with Ubuntu Server installed (ubuntu-24_04-lts), updates were made to patch the system:
+---
+
+## Tooling Versions
+
+* Python: 3.12.x
+* pip: 24.x
+* pymodbus: 3.12.x
+
+Note: API changes may affect compatibility. Refer to the pymodbus API change log for updates (https://pymodbus.readthedocs.io/en/latest/source/api_changes.html).
+
+---
+
+## Step 1: Install Ubuntu 22.04 LTS on the OT VM
+
+A headless (no-GUI) installation of **Ubuntu Server 22.04 LTS** was used for the OT VM. All tooling and scripts below assume this environment.
+
+---
+
+## Step 2: Install OT Simulation Tools
+
+Patch the system:
+
 ```bash
-sudo apt update && sudo apt install
-```
-Then install python:
-```bash
-sudo apt install git python3 python3-pip -y
+sudo apt update && sudo apt upgrade -y
 ```
 
-Next, clone the OpenPLC repository with the following command: 
+Install Git and Python:
+
+```bash
+sudo apt install git python3 python3-pip python3-venv -y
+```
+
+Clone the OpenPLC repository:
+
 ```bash
 git clone https://github.com/thiagoralves/OpenPLC_v3.git
-```
-
-Set the current directory to `OpenPLC_v3`:
-```bash
 cd OpenPLC_v3
 ```
 
-Run the installer for OpenPLC using the proper parameters for your OS (Linux in this case):
+Install OpenPLC:
+
 ```bash
 ./install.sh linux
 ```
 
-Be sure to create and use a virtual environment to isolate the project dependencies. Name your environment to something recognizable. In my case, I used `ot-venv`.
+---
+
+## Step 3: Create a Python Virtual Environment
+
+Create and activate a dedicated virtual environment to isolate OT dependencies:
+
 ```bash
 python3 -m venv ~/ot-venv
-source /ot-venv/bin/activate
+source ~/ot-venv/bin/activate
 ```
 
-While in the new `ot-venv`, download and install pymodbus:
+Install Modbus libraries:
+
 ```bash
-pip3 install pymodbus modbus-tk
+pip install pymodbus modbus-tk
 ```
 
-After installations, update all dependencies with `sudo apt upgrade && sudo apt install`. You may want to make sure the version of python and pip are compatable using the following commands:
+Verify versions:
+
 ```bash
 python3 --version
-pip3 --version
+pip --version
 ```
 
-### Step 3: Simulate PLC (Programmable Logic Controller) / HMI (Human-Machine Interface) / SCADA (Supervisory Control and Data Acquisition) with Modbus Server
+---
 
-Create a simple Modbus Server by using the Linux CLI to open the `modbus_server.py` file using nano:
+## Step 4: Simulate a PLC Using a Modbus TCP Server
+
+Create the server script:
+
 ```bash
 nano modbus_server.py
 ```
 
-Then copy, paste, and write out the the Modbus Server Script for OT VM:
-```py
+```python
 from pymodbus.server import StartTcpServer
 from pymodbus.datastore import (
     ModbusSequentialDataBlock,
@@ -90,22 +120,37 @@ StartTcpServer(
     context=context,
     address=("0.0.0.0", 502)
 )
-
 ```
 
-Start the Modbus Server:
+Start the PLC server (privileged port 502):
+
 ```bash
-sudo ot-venv/bin/python modbus_server.py
+sudo ~/ot-venv/bin/python modbus_server.py
 ```
-There should be validation and confirmation that the server is now running on port 502.
 
-After confirmation that the server is running, open another terminal using `CTRL+ALT+F2` on Linux Ubuntu Server, and logon to your ot-venv. You can navigate from terminal 1 and 2 by using `ALT+F1` (terminal 1) and `ALT+F2` (terminal 2). Once you are logged in, create a new file with the following command:
+You should see:
+
+```
+INFO:root:Starting Modbus TCP Server on port 502
+```
+
+---
+
+## Step 5: Simulate an HMI (Client)
+
+Open a second terminal (`CTRL+ALT+F2`) and activate the venv:
+
+```bash
+source ~/ot-venv/bin/activate
+```
+
+Create the HMI client script:
+
 ```bash
 nano modbus_client.py
 ```
 
-This should open up a script for the `modbus_client.py` file. Add the following to the file and write out to save the changes:
-```py
+```python
 from pymodbus.client import ModbusTcpClient
 import time
 
@@ -132,26 +177,37 @@ print("Holding Registers after write:", rr.registers)
 
 client.close()
 ```
-In terminal 2 (modbus_client terminal), run the client with:
+
+Run the HMI script:
+
 ```bash
-sudo ot-venv/bin/python modbus_client.py
+sudo ~/ot-venv/bin/python modbus_client.py
 ```
-The output should read:
-```bash
+
+Expected output:
+
+```
 Holding Registers: [100, 100, 100, 100, 100]
 Holding Registers after write: [100, 999, 100, 100, 100]
 ```
 
-If you have connectivity problems, check terminal 1 (modbus_server terminal) and make sure the server is on. You can terminate the server using `ctrl+c` while in the server terminal.
+---
 
-Note: This project uses pymodbus 3.12.x, python 3.12.3, and pip 24.0. There may be API changes and be subject to pymodbus API fragmentation. You may need to read documentation on API changes at https://pymodbus.readthedocs.io/en/latest/source/api_changes.html.
+## Step 6: Simulate a SCADA System (Baseline Polling)
 
-Now that the server and client are running properly, we need to simulate traffic using a script. Open a third terminal using `CTRL+ALT+F3`, then create a file called `polling_client.py` using the following command:
+Open a third terminal (`CTRL+ALT+F3`) and activate the venv:
+
+```bash
+source ~/ot-venv/bin/activate
+```
+
+Create the polling client:
+
 ```bash
 nano polling_client.py
 ```
-Write out the following script in the new polling_client.py file:
-```py
+
+```python
 from pymodbus.client import ModbusTcpClient
 import time
 
@@ -173,51 +229,115 @@ while True:
     time.sleep(3)
 ```
 
-Now start the OT-ENV and run the polling_client:
+Run the SCADA client:
+
 ```bash
-source ~/ot-venv/bin/activate
 python polling_client.py
 ```
-If setup correctly, the command line should return the following with an interval of three seconds:
-```bash
-SCADA Poll: [100, 999, 100, 100, 100]
+
+You should see repeated output every three seconds:
+
+```
+SCADA Poll: [100, 100, 100, 100, 100]
 ```
 
-We now have three logical OT Assets and have a fully simulated OT environment.
+---
+
+## Logical OT Assets
+
+Although all components run on one VM, they are treated as independent OT assets for inventory and risk analysis:
+
 | Asset    | Script            | Behavior         |
 | -------- | ----------------- | ---------------- |
 | PLC-01   | modbus_server.py  | Serves registers |
-| HMI-01   | modbus_client.py  | Reads + writes   |
+| HMI-01   | modbus_client.py  | Reads and writes |
 | SCADA-01 | polling_client.py | Constant polling |
 
-### Step 4: Create Controlled Traffic Scenarios
+---
 
-#### Scenario A: Normal Operations (Baseline)
-1. Start the PLC server (modbus_server.py)
-2. Start SCADA polling client (polling_client.py)
-3. Let it run for 2-5 minutes
-4. Do not run the HMI write script (modbus_client.py)
+## Step 7: Controlled Traffic Scenarios
 
-This scenario should result in clean Modbus reads with predictable polling and no register changes.
+### Scenario A — Normal Operations (Baseline)
 
-#### Scenario B: Operator Activity (Legitimate Write)
-Modify the HMI script slightly (modbus_client.py):
-```py
+1. Start the PLC server (`modbus_server.py`)
+2. Start the SCADA polling client (`polling_client.py`)
+3. Let it run for 2–5 minutes
+4. Do **not** run the HMI script
+
+**Expected behavior**:
+
+* Repeated Modbus read requests
+* No register value changes
+* Predictable polling intervals
+
+---
+
+### Scenario B — Operator Activity (Legitimate Write)
+
+Modify the HMI script to simulate a normal operator adjustment.
+
+**Change only this line** in `modbus_client.py`:
+
+```python
 # legitimate operator write
 client.write_register(1, 120)
 ```
-Run this script one time. This will simulate a normal process adjustment and an authorized register write.
 
-#### Scenario C: Attack Simulation (Unauthorized Write)
-The existing logic:
-```py
+Run the script once:
+
+```bash
+sudo ~/ot-venv/bin/python modbus_client.py
+```
+
+**What this simulates**:
+
+* An authorized process change
+* A safe control action
+* Normal HMI behavior
+
+**Expected SCADA output**:
+
+```
+SCADA Poll: [100, 120, 100, 100, 100]
+```
+
+---
+
+### Scenario C — Attack Simulation (Unauthorized Write)
+
+Revert the HMI script to the attack value:
+
+```python
 client.write_register(1, 999)
 ```
-This simulates malicious or an unsafe write and process manipulation.
 
-#### Scenario D: Misconfigured or Rogue Behavior
-The following script simulates a compromised HMI, malware, or faulty automation script:
-```py
+Run the script once:
+
+```bash
+sudo ~/ot-venv/bin/python modbus_client.py
+```
+
+**What this simulates**:
+
+* Malicious or unsafe register manipulation
+* Unauthorized control action
+* Process integrity violation
+
+**Expected SCADA output**:
+
+```
+SCADA Poll: [100, 999, 100, 100, 100]
+```
+
+---
+
+### Scenario D — Misconfigured or Rogue Behavior (Optional)
+
+This simulates a compromised HMI, malware, or faulty automation logic.
+
+Create `noisy_client.py`:
+
+```python
 from pymodbus.client import ModbusTcpClient
 import time
 import random
@@ -232,3 +352,17 @@ while True:
     print(f"Noisy write to register {addr}: {value}")
     time.sleep(10)
 ```
+
+Run:
+
+```bash
+sudo ~/ot-venv/bin/python noisy_client.py
+```
+
+**What this simulates**:
+
+* Compromised endpoint
+* Malware-like behavior
+* Unstable automation logic
+
+---
