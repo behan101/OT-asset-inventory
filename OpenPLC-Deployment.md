@@ -214,3 +214,21 @@ The existing logic:
 client.write_register(1, 999)
 ```
 This simulates malicious or an unsafe write and process manipulation.
+
+#### Scenario D: Misconfigured or Rogue Behavior
+The following script simulates a compromised HMI, malware, or faulty automation script:
+```py
+from pymodbus.client import ModbusTcpClient
+import time
+import random
+
+client = ModbusTcpClient("127.0.0.1", port=502)
+client.connect()
+
+while True:
+    addr = random.randint(0, 5)
+    value = random.randint(0, 2000)
+    client.write_register(addr, value)
+    print(f"Noisy write to register {addr}: {value}")
+    time.sleep(10)
+```
