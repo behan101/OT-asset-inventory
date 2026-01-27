@@ -471,7 +471,7 @@ sudo apt install tcpdump -y
 
 Run the baseline scenario and then capture traffic:
 ```bash
-sudo tcpdump -i any port 502 -w baseline.pcap
+sudo tcpdump -i any port 502 -w scenario_a_baseline.pcap
 ```
 
 Let SCADA (polling_client.py) run for 2-3 minutes in seperate terminal other than the modbus_server and then close the process with `CTRL+C`.
@@ -545,6 +545,15 @@ SCADA Poll: [100, 120, 100, 100, 100]
 or
 ```bash
 SCADA Poll: [100, 999, 100, 100, 100]
+```
+
+Remember to use the proper naming convention to help organize and avoid confusion:
+```text
+pcaps/
+├── scenario_a_baseline.pcap
+├── scenario_b_legit_write.pcap
+├── scenario_c_attack_write.pcap
+└── scenario_d_noisy_writes.pcap
 ```
 
 ---
