@@ -14,13 +14,18 @@ rr = client.read_holding_registers(0, count=5)
 print("Holding Registers:", rr.registers)
 
 # Write to a holding register (baseline)
-client.write_register(1, 100)
+wr = client.write_register(1, 100)
 
 # Write to a holding register (legitimate operator value)
-# client.write_register(1, 120)
+#wr = client.write_register(1, 120)
 
 # Write to a holding register (simulated attack)
-# client.write_register(1, 999)
+#wr = client.write_register(1, 999)
+
+if wr.isError():
+    print("Write failed:", wr)
+else:
+    print("Write successful")
 
 time.sleep(1)
 
