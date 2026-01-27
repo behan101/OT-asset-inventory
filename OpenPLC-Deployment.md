@@ -274,6 +274,12 @@ Run the SCADA client:
 python polling_client.py
 ```
 
+If the script does not run, try using the following command to ensure the virtual environment and proper privileges are running:
+
+```bash
+sudo ~/ot-venv/bin/python polling_client.py
+```
+
 You should see repeated output every three seconds:
 
 ```
@@ -468,5 +474,5 @@ Run the baseline scenario and then capture traffic:
 sudo tcpdump -i any port 502 -w baseline.pcap
 ```
 
-Let SCADA run for 2-3 minutes and then close the process with `CTRL+C`.
+Let SCADA (polling_client.py) run for 2-3 minutes in seperate terminal other than the modbus_server and then close the process with `CTRL+C`.
 
