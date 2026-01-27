@@ -1,6 +1,6 @@
 # Index
 - [Step 1: Capture Traffic for Each Scenario](#step-1-capture-traffic-for-each-scenario)
-- [Full State Reset + Re-Capture]()
+- [Full State Reset + Re-Capture](#full-state-reset--re-capture)
 
 
 # Step 1: Capture Traffic for Each Scenario
