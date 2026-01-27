@@ -122,39 +122,8 @@ Create the server script:
 nano modbus_server.py
 ```
 
-```python
-from pymodbus.server import StartTcpServer
-from pymodbus.datastore import (
-    ModbusSequentialDataBlock,
-    ModbusServerContext,
-    ModbusDeviceContext
-)
-import logging
+Copy the script `modbus_server.py` (https://github.com/behan101/OT-asset-inventory/blob/main/modbus_server.py) and write out with `CTRL+O`
 
-# Enable Logging (SOC visibility)
-logging.basicConfig()
-log = logging.getLogger()
-log.setLevel(logging.INFO)
-
-# Create device context
-device = ModbusDeviceContext(
-    di=ModbusSequentialDataBlock(0, [1]*10), # Discrete Inputs
-    co=ModbusSequentialDataBlock(0, [0]*10), # Coils
-    hr=ModbusSequentialDataBlock(0, [100]*10), # Holding Registers
-    ir=ModbusSequentialDataBlock(0, [200]*10), # Input Registers
-)
-
-# Wrap in server context
-context = ModbusServerContext(device, single=True)
-
-# Start Modbus TCP Server
-log.info("Starting Modbus TCP Server on port 502")
-
-StartTcpServer(
-    context=context,
-    address=("0.0.0.0", 502)
-)
-```
 
 Start the PLC server (privileged port 502):
 
@@ -184,39 +153,7 @@ Create the HMI client script:
 nano modbus_client.py
 ```
 
-```python
-from pymodbus.client import ModbusTcpClient
-import time
-
-client = ModbusTcpClient("127.0.0.1", port=502)
-
-if not client.connect():
-    print("Failed to connect to Modbus server")
-    exit(1)
-
-print("Connected to Modbus server")
-
-# Read holding registers
-rr = client.read_holding_registers(0, count=5)
-print("Holding Registers:", rr.registers)
-
-# Write to a holding register (baseline)
-client.write_register(1, 100)
-
-# Write to a holding register (legitimate operator value)
-# client.write_register(1, 120)
-
-# Write to a holding register (simulated attack)
-# client.write_register(1, 999)
-
-time.sleep(1)
-
-# Read again
-rr = client.read_holding_registers(0, count=5)
-print("Holding Registers after write:", rr.registers)
-
-client.close
-```
+Copy the script `modbus_client.py` (https://github.com/behan101/OT-asset-inventory/blob/main/modbus_client.py) and write out with `CTRL+O`.
 
 Run the HMI script:
 
@@ -247,27 +184,7 @@ Create the polling client:
 nano polling_client.py
 ```
 
-```python
-from pymodbus.client import ModbusTcpClient
-import time
-
-client = ModbusTcpClient("127.0.0.1", port=502)
-
-if not client.connect():
-    print("Failed to connect to Modbus server")
-    exit(1)
-
-print("SCADA connected to PLC")
-
-while True:
-    rr = client.read_holding_registers(0, count=5)
-    if rr.isError():
-        print("Read error")
-    else:
-        print("SCADA Poll:", rr.registers)
-
-    time.sleep(3)
-```
+Copy the script `polling_client.py` (https://github.com/behan101/OT-asset-inventory/blob/main/polling_client.py) and write out with `CTRL+O`.
 
 Run the SCADA client:
 
@@ -428,22 +345,11 @@ SCADA Poll: [100, 999, 100, 100, 100]
 This simulates a compromised HMI, malware, or faulty automation logic.
 
 Create `noisy_client.py`:
-
-```python
-from pymodbus.client import ModbusTcpClient
-import time
-import random
-
-client = ModbusTcpClient("127.0.0.1", port=502)
-client.connect()
-
-while True:
-    addr = random.randint(0, 5)
-    value = random.randint(0, 2000)
-    client.write_register(addr, value)
-    print(f"Noisy write to register {addr}: {value}")
-    time.sleep(10)
+```bash
+nano noisy_client.py
 ```
+
+Copy the script `noisy_client.py` (https://github.com/behan101/OT-asset-inventory/blob/main/noisy_client.py) and write out with `CTRL+O`.
 
 Run:
 
