@@ -56,7 +56,7 @@ Note: API changes may affect compatibility. Refer to the pymodbus API change log
 
 # Step 1: Install Ubuntu 22.04 LTS on the OT VM
 
-A headless (no-GUI) installation of **Ubuntu Server 22.04 LTS** was used for the OT VM. All tooling and scripts below assume this environment.
+A headless (no-GUI) installation of **Ubuntu Server 22.04 LTS** was used for the OT VM. All tooling and scripts below assume this environment. When creating a user and password, I highly recommend a strong password since the server will be exposed to the internet. Be sure to write down or save your username and password.
 
 ---
 
