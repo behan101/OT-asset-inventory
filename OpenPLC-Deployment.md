@@ -16,6 +16,9 @@
     - [Scenario B - Operator Activity (Legitimate Write)](#scenario-b--operator-activity-legitimate-write)
     - [Scenario C - Attack Simulation (Unauthorized Write)](#scenario-c--attack-simulation-unauthorized-write)
     - [Scenario D - Misconfigured or Rogue Behavior (Optional)](#scenario-d--misconfigured-or-rogue-behavior-optional)
+- [Step 8: Install tcpdump on the OT VM](#step-8-install-tcpdump-on-the-ot-vm)
+- [Step 9: Capture Traffic for Each Scenario](#step-9-capture-traffic-for-each-scenario)
+
 
 ---
 
@@ -467,7 +470,7 @@ sudo apt install tcpdump -y
 
 ---
 
-# Step 9: Capture traffic for each Scenario
+# Step 9: Capture Traffic for Each Scenario
 
 Run the baseline scenario and then capture traffic:
 ```bash
