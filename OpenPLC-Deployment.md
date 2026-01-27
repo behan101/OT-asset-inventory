@@ -452,3 +452,21 @@ sudo ~/ot-venv/bin/python noisy_client.py
 
 ---
 
+# Step 8: Install tcpdump on the OT VM
+
+Now that the scenarios are proven to be working properly, we can move on to packet capture. For this project, I used tcpdump since Wireshark does not work on a headless operating system without further complications. If you wish to use a GUI OS and install Wireshark, you may want to recreate the steps so far with a fresh install of Ubuntu Server with a GUI. To install tcpdump, use the following command in a terminal:
+```bash
+sudo apt install tcpdump -y
+```
+
+---
+
+# Step 9: Capture traffic for each Scenario
+
+Run the baseline scenario and then capture traffic:
+```bash
+sudo tcpdump -i any port 502 -w baseline.pcap
+```
+
+Let SCADA run for 2-3 minutes and then close the process with `CTRL+C`.
+
