@@ -324,14 +324,14 @@ sudo ~/ot-venv/bin/python modbus_client.py
 **Restoring Baseline State**:
 If the HMI script was previously executed and register values were modified, the baseline state can be restored using one of the following methods:
 
-Method 1 — Operator Reset (Preferred)
+**Method 1 — Operator Reset (Preferred)**
 Modify the HMI script to write the original baseline value:
 ```py
 client.write_register(1, 100)
 ```
 This can be done by removing the comment hash on the desired line and adding comment hashes on the other scenarios. Run the script once to restore the register to its initial value.
 
-Method 2 — PLC Restart
+**Method 2 — PLC Restart**
 Stop and restart the Modbus server (modbus_server.py). This reinitializes all registers to their default values.
 
 ---
@@ -476,3 +476,75 @@ sudo tcpdump -i any port 502 -w baseline.pcap
 
 Let SCADA (polling_client.py) run for 2-3 minutes in seperate terminal other than the modbus_server and then close the process with `CTRL+C`.
 
+---
+
+**If the scenario is misconfigured, use this method to reset the state and re-run the scenario for the another clean capture.**
+
+**Method**:
+
+Step 1: Stop all processes
+In all terminals, press `CTRL+C` to stop all processes.
+
+Stop:
+- PLC (modbus_server.py)
+- SCADA (polling_client.py)
+- Any HMI or noisy clients
+- tcpdump (if running)
+
+Step 2: Reset PLC state (Registers)
+```bash
+sudo ~/ot-venv/bin/python modbus_server.py
+```
+This restores:
+- Holding Registers to `[100, 100, 100, 100, 100]`
+- Coils, inputs, etc.
+
+Step 3: Start SCADA Only (Baseline)
+```bash
+source ~/ot-venv/bin/activate
+python polling_client.py
+```
+
+Confirm the output:
+```bash
+SCADA Poll: [100, 100, 100, 100, 100]
+```
+
+Step 4: Prepare the correct scenario in the HMI script
+Open `modbus_client.py`
+```bash
+nano modbus_client.py
+```
+
+| Scenario | Write (Comment out the others) |
+| -------- | ---------------- |
+| A (Baseline) | `client.write_registers(1, 100)` |
+| B (Legitimate Operator) | `client.write_registers(1, 120)` |
+| C (Attack) | `client.write_registers(1, 999)` |
+
+Step 5: Start the traffic capture
+Use a scenario-specific filename:
+```bash
+sudo tcpdump -i any port 502 -w scenario_b_legit_write.pcap
+```
+or
+```bash
+sudo tcpdump -i any port 502 -w scenario_c_attack_write.pcap
+```
+Wait 5–10 seconds to capture baseline SCADA reads.
+
+Step 6: Trigger the scenario
+In another terminal:
+```bash
+sudo ~/ot-venv/bin/python modbus_client.py
+```
+Watch SCADA output change:
+```bash
+SCADA Poll: [100, 120, 100, 100, 100]
+```
+or
+```bash
+SCADA Poll: [100, 999, 100, 100, 100]
+```
+
+---
