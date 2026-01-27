@@ -298,8 +298,14 @@ Although all components run on one VM, they are treated as independent OT assets
 
 ## Scenario A — Normal Operations (Baseline)
 
-1. Start the PLC server (`modbus_server.py`)
-2. Start the SCADA polling client (`polling_client.py`)
+1. Start the PLC server (`modbus_server.py`) in terminal 1:
+```bash
+sudo ~/ot-venv/bin/python modbus_server.py
+```
+2. Start the SCADA polling client (`polling_client.py`) in different terminal:
+```bash
+sudo ~/ot-venv/bin/python modbus_client.py
+```
 3. Let it run for 2–5 minutes
 4. Do **not** run the HMI script.
 
