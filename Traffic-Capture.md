@@ -1,11 +1,14 @@
 # Index
-- [Step 1: Capture Traffic for Each Scenario](#step-1-capture-traffic-for-each-scenario)
+- [Capture Traffic for Each Scenario](#capture-traffic-for-each-scenario)
+- [Scenario A: Baseline]()
 - [Full State Reset + Re-Capture](#full-state-reset--re-capture)
+- [Captured Traffic Scenarios]()
 
+# Capture Traffic for Each Scenario
 
-# Step 1: Capture Traffic for Each Scenario
+## Scenario A: Basline
 
-Run the baseline scenario and then capture traffic:
+Run the baseline scenario (https://github.com/behan101/OT-asset-inventory/blob/main/OpenPLC-Deployment.md#scenario-a--normal-operations-baseline).
 ```bash
 sudo tcpdump -i any port 502 -w scenario_a_baseline.pcap
 ```
@@ -18,7 +21,7 @@ Let SCADA (polling_client.py) run for 2-3 minutes in seperate terminal other tha
 
 If the scenario is misconfigured, use this method to reset the state and re-run the scenario for the another clean capture.
 
-**Step 1**: Stop all processes
+## Step 1: Stop all processes
 In all terminals, press `CTRL+C` to stop all processes.
 
 Stop:
@@ -27,7 +30,7 @@ Stop:
 - Any HMI or noisy clients
 - tcpdump (if running)
 
-**Step 2**: Reset PLC state (Registers)
+## Step 2: Reset PLC state (Registers)
 ```bash
 sudo ~/ot-venv/bin/python modbus_server.py
 ```
@@ -35,7 +38,7 @@ This restores:
 - Holding Registers to `[100, 100, 100, 100, 100]`
 - Coils, inputs, etc.
 
-**Step 3**: Start SCADA Only (Baseline)
+## Step 3: Start SCADA Only (Baseline)
 ```bash
 source ~/ot-venv/bin/activate
 python polling_client.py
@@ -46,7 +49,7 @@ Confirm the output:
 SCADA Poll: [100, 100, 100, 100, 100]
 ```
 
-**Step 4**: Prepare the correct scenario in the HMI script
+## Step 4: Prepare the correct scenario in the HMI script
 Open `modbus_client.py`
 ```bash
 nano modbus_client.py
@@ -58,7 +61,7 @@ nano modbus_client.py
 | B (Legitimate Operator) | `client.write_registers(1, 120)` |
 | C (Attack) | `client.write_registers(1, 999)` |
 
-**Step 5**: Start the traffic capture
+## Step 5: Start the traffic capture
 Use a scenario-specific filename:
 ```bash
 sudo tcpdump -i any port 502 -w scenario_b_legit_write.pcap
@@ -69,7 +72,7 @@ sudo tcpdump -i any port 502 -w scenario_c_attack_write.pcap
 ```
 Wait 5–10 seconds to capture baseline SCADA reads.
 
-**Step 6**: Trigger the scenario
+## Step 6: Trigger the scenario
 In another terminal:
 ```bash
 sudo ~/ot-venv/bin/python modbus_client.py
@@ -93,3 +96,39 @@ pcaps/
 ```
 
 ---
+
+# Captured Traffic Scenarios
+
+The following packet captures were generated from the OT simulation environment.
+
+## Scenario A — Baseline Operations
+Description:
+- SCADA polling only
+- No HMI writes
+- Stable register values
+
+Expected Behavior:
+- Modbus function code 03 only
+- Predictable polling interval
+
+---
+
+## Scenario B — Legitimate Operator Write
+Description:
+- HMI writes value 120 to holding register 1
+- Normal polling resumes
+
+Expected Behavior:
+- One Modbus function code 06
+- Followed by function code 03 polling
+
+---
+
+## Scenario C — Unauthorized Write (Attack Simulation)
+Description:
+- HMI writes value 999 to holding register 1
+- Unsafe process value introduced
+
+Expected Behavior:
+- One Modbus function code 06
+- Followed by function code 03 polling
