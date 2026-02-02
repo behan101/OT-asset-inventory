@@ -16,26 +16,30 @@ Run the baseline scenario (https://github.com/behan101/OT-asset-inventory/blob/m
 ```bash
 sudo tcpdump -i any port 502 -w scenario_a_baseline.pcap
 ```
-Remember to let the SCADA (polling_client.py) run for 30 seconds in seperate terminal other than the modbus_server. Do this before capturing traffic. After a few minutes of capturing traffic, stop pcap captures with `CTRL+C` in the terminal running tcpdump.
+Let SCADA run for 30 seconds before starting tcpdump. Capture traffic for about 30–60 seconds total, then stop with `CTRL+C`.
 
 ---
 
 ## Scenario B: Operator Activity (Legitimate Write)
 
-After running scenario A, edit the modbus_client.py to run scenario B. Start tcpdump first, then run the HMI script once so the write is captured. Next in the tcpdump terminal, capture packets using:
+After running scenario A, start the packet capture for Scenario B:
 ```bash
 sudo tcpdump -i any port 502 -w scenario_b_legitwrite.pcap
 ```
+Once the capture has started, edit the modbus_client.py (HMI) script and configure it for scenario B. Then run the script.
+
 After 30 seconds of capturing traffic, including the write, close the operation with `CTRL+C` in the tcpdump terminal.
 
 ---
 
 ## Scenario C: Attack Simulation (Unauthorized Write)
 
-After running scenario B, edit the modbus_client.py to run scenario C. Start tcpdump first, then run the HMI script once so the write is captured. Next in the tcpdump terminal, capture packets using:
+After running scenario B, start the packet capture for Scenario C:
 ```bash
 sudo tcpdump -i any port 502 -w scenario_c_attack_write.pcap
 ```
+Once the capture has started, edit the modbus_client.py (HMI) script and configure it for scenario C. Then run the script.
+
 After 30 seconds of capturing traffic, including the write, close the operation with `CTRL+C` in the tcpdump terminal.
 
 ---
@@ -87,7 +91,7 @@ nano modbus_client.py
 ## Step 5: Start the traffic capture
 Use a scenario-specific filename:
 ```bash
-sudo tcpdump -i any port 502 -w scenario_b_legit_write.pcap
+sudo tcpdump -i any port 502 -w scenario_b_legitwrite.pcap
 ```
 or
 ```bash
@@ -113,7 +117,7 @@ Remember to use the proper naming convention to help organize and avoid confusio
 ```text
 pcaps/
 ├── scenario_a_baseline.pcap
-├── scenario_b_legit_write.pcap
+├── scenario_b_legitwrite.pcap
 ├── scenario_c_attack_write.pcap
 └── scenario_d_noisy_writes.pcap
 ```
@@ -211,7 +215,7 @@ You should see a folder named `sf_OT-PCAPS`.
 Copy the scenario PCAPS:
 ```bash
 sudo cp scenario_a_baseline.pcap /media/sf_OT-PCAPS/
-sudo cp scenario_b_operator_write.pcap /media/sf_OT-PCAPS/
+sudo cp scenario_b_legitwrite.pcap /media/sf_OT-PCAPS/
 sudo cp scenario_c_attack_write.pcap /media/sf_OT-PCAPS/
 ```
 The PCAP files should now be accessible in the shared folder of the host computer. You can use these to upload them to Github or inspect them using Wireshark.
