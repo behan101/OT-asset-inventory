@@ -7,6 +7,7 @@
 - [Captured Traffic Scenarios](#captured-traffic-scenarios)
 - [Viewing PCAP Files](#viewing-pcap-files)
 - [Local VM (OT VM) Shared Folder to Host](#local-vm-ot-vm-shared-folder-to-host)
+- [Terminal Layout](#terminal-layout)
 
 # Capture Traffic for Each Scenario
 
