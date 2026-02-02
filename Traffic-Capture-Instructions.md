@@ -2,7 +2,7 @@
 - [Capture Traffic for Each Scenario](#capture-traffic-for-each-scenario)
 - [Scenario A: Baseline](#scenario-a-baseline)
 - [Scenario B: Operator Activity (Legitimate Write)](#scenario-b-operator-activity-legitimate-write)
-- [Scenario C: Attack Simulation (Unauthorized Write)](#scenario-c-attack-simulation-unauthorizerd-write)
+- [Scenario C: Attack Simulation (Unauthorized Write)](#scenario-c-attack-simulation-unauthorized-write)
 - [Full State Reset + Re-Capture](#full-state-reset--re-capture)
 - [Captured Traffic Scenarios](#captured-traffic-scenarios)
 - [Viewing PCAP Files](#viewing-pcap-files)
@@ -16,27 +16,27 @@ Run the baseline scenario (https://github.com/behan101/OT-asset-inventory/blob/m
 ```bash
 sudo tcpdump -i any port 502 -w scenario_a_baseline.pcap
 ```
-Remember to let the SCADA (polling_client.py) run for 2-3 minutes in seperate terminal other than the modbus_server. Do this before capturing traffic. After a few minutes of capturing traffic, stop pcap captures with `CTRL+C` in the terminal running tcpdump.
+Remember to let the SCADA (polling_client.py) run for 30 seconds in seperate terminal other than the modbus_server. Do this before capturing traffic. After a few minutes of capturing traffic, stop pcap captures with `CTRL+C` in the terminal running tcpdump.
 
 ---
 
 ## Scenario B: Operator Activity (Legitimate Write)
 
-After running scenario A, edit the modbus_client.py to run scenario B. Run the script once, then in the tcpdump terminal, capture packets using:
+After running scenario A, edit the modbus_client.py to run scenario B. Start tcpdump first, then run the HMI script once so the write is captured. Next in the tcpdump terminal, capture packets using:
 ```bash
 sudo tcpdump -i any port 502 -w scenario_b_legitwrite.pcap
 ```
-After a few minutes of capturing traffic, close the operation with `CTRL+C` in the tcpdump terminal.
+After 30 seconds of capturing traffic, including the write, close the operation with `CTRL+C` in the tcpdump terminal.
 
 ---
 
-## Scenario C: Attack Simulation (Unauthorizerd Write)
+## Scenario C: Attack Simulation (Unauthorized Write)
 
-After running scenario B, edit the modbus_client.py to run scenario C. Run the script once, then in the tcpdump terminal, capture packets using:
+After running scenario B, edit the modbus_client.py to run scenario C. Start tcpdump first, then run the HMI script once so the write is captured. Next in the tcpdump terminal, capture packets using:
 ```bash
 sudo tcpdump -i any port 502 -w scenario_c_attack_write.pcap
 ```
-After a few minutes of capturing traffic, close the operation with `CTRL+C` in the tcpdump terminal.
+After 30 seconds of capturing traffic, including the write, close the operation with `CTRL+C` in the tcpdump terminal.
 
 ---
 
@@ -80,9 +80,9 @@ nano modbus_client.py
 
 | Scenario | Write (Comment out the others) |
 | -------- | ---------------- |
-| A (Baseline) | `client.write_registers(1, 100)` |
-| B (Legitimate Operator) | `client.write_registers(1, 120)` |
-| C (Attack) | `client.write_registers(1, 999)` |
+| A (Baseline) | `client.write_register(1, 100)` |
+| B (Legitimate Operator) | `client.write_register(1, 120)` |
+| C (Attack) | `client.write_register(1, 999)` |
 
 ## Step 5: Start the traffic capture
 Use a scenario-specific filename:
@@ -210,8 +210,8 @@ You should see a folder named `sf_OT-PCAPS`.
 
 Copy the scenario PCAPS:
 ```bash
-sudo cp scenario_a_baseline.pcap /media/sf_ot-pcaps/
-sudo cp scenario_b_operator_write.pcap /media/sf_ot-pcaps/
-sudo cp scenario_c_attack_write.pcap /media/sf_ot-pcaps/
+sudo cp scenario_a_baseline.pcap /media/sf_OT-PCAPS/
+sudo cp scenario_b_operator_write.pcap /media/sf_OT-PCAPS/
+sudo cp scenario_c_attack_write.pcap /media/sf_OT-PCAPS/
 ```
 The PCAP files should now be accessible in the shared folder of the host computer. You can use these to upload them to Github or inspect them using Wireshark.
