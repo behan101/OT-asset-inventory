@@ -12,35 +12,71 @@
 
 ## Scenario A: Baseline
 
-Run the baseline scenario (https://github.com/behan101/OT-asset-inventory/blob/main/OpenPLC-Deployment.md#scenario-a--normal-operations-baseline).
+Run the baseline scenario (https://github.com/behan101/OT-asset-inventory/blob/main/OpenPLC-Deployment.md#scenario-a--normal-operations-baseline). Start the packet capture:
 ```bash
 sudo tcpdump -i any port 502 -w scenario_a_baseline.pcap
 ```
-Let SCADA run for 30 seconds before starting tcpdump. Capture traffic for about 30–60 seconds total, then stop with `CTRL+C`.
+Let SCADA Polling run normally. Capture traffic for about 30–60 seconds total, then stop with `CTRL+C`.
 
 ---
 
 ## Scenario B: Operator Activity (Legitimate Write)
 
-After running scenario A, start the packet capture for Scenario B:
-```bash
-sudo tcpdump -i any port 502 -w scenario_b_legitwrite.pcap
+### Step 1: Configure the HMI script for Scenario B
+Edit modbus_client.py and enable:
+```python
+client.write_register(1, 120)
 ```
-Once the capture has started, edit the modbus_client.py (HMI) script and configure it for scenario B. Then run the script.
 
-After 30 seconds of capturing traffic, including the write, close the operation with `CTRL+C` in the tcpdump terminal.
+---
+
+### Step 2: Start Packet Capture
+```bash
+sudo tcpdump -i any port 502 -w scenario_b_legit_write.pcap
+```
+
+---
+
+### Step 3: Trigger the Operator Write once
+In another terminal:
+```bash
+~/ot-venv/bin/python modbus_client.py
+```
+
+---
+
+### Step 4: Stop Capture
+After roughly 30 seconds of capturing packets, stop the process with `CTRL+C`.
 
 ---
 
 ## Scenario C: Attack Simulation (Unauthorized Write)
 
-After running scenario B, start the packet capture for Scenario C:
+### Step 1: Configure the HMI script for Scenario C
+Edit modbus_client.py and enable:
+```python
+client.write_register(1, 999)
+```
+
+---
+
+### Step 2: Start Packet Capture
 ```bash
 sudo tcpdump -i any port 502 -w scenario_c_attack_write.pcap
 ```
-Once the capture has started, edit the modbus_client.py (HMI) script and configure it for scenario C. Then run the script.
 
-After 30 seconds of capturing traffic, including the write, close the operation with `CTRL+C` in the tcpdump terminal.
+---
+
+### Step 3: Trigger the Attack Write once
+In another terminal:
+```bash
+~/ot-venv/bin/python modbus_client.py
+```
+
+---
+
+### Step 4: Stop Capture
+After roughly 30 seconds of capturing packets, stop the process with `CTRL+C`.
 
 ---
 
@@ -60,7 +96,7 @@ Stop:
 ## Step 2: Reset PLC state (Registers)
 Restarting the server reinitializes all registers back to their default values.
 ```bash
-sudo ~/ot-venv/bin/python modbus_server.py
+~/ot-venv/bin/python modbus_server.py
 ```
 This restores:
 - Holding Registers to `[100, 100, 100, 100, 100]`
@@ -92,7 +128,7 @@ nano modbus_client.py
 ## Step 5: Start the traffic capture
 Use a scenario-specific filename:
 ```bash
-sudo tcpdump -i any port 502 -w scenario_b_legitwrite.pcap
+sudo tcpdump -i any port 502 -w scenario_b_legit_write.pcap
 ```
 or
 ```bash
@@ -103,7 +139,7 @@ Wait 5–10 seconds to capture baseline SCADA reads.
 ## Step 6: Trigger the scenario
 In another terminal:
 ```bash
-sudo ~/ot-venv/bin/python modbus_client.py
+~/ot-venv/bin/python modbus_client.py
 ```
 Watch SCADA output change:
 ```bash
@@ -118,7 +154,7 @@ Remember to use the proper naming convention to help organize and avoid confusio
 ```text
 pcaps/
 ├── scenario_a_baseline.pcap
-├── scenario_b_legitwrite.pcap
+├── scenario_b_legit_write.pcap
 ├── scenario_c_attack_write.pcap
 └── scenario_d_noisy_writes.pcap
 ```
@@ -216,7 +252,7 @@ You should see a folder named `sf_OT-PCAPS`.
 Copy the scenario PCAPS:
 ```bash
 sudo cp scenario_a_baseline.pcap /media/sf_OT-PCAPS/
-sudo cp scenario_b_legitwrite.pcap /media/sf_OT-PCAPS/
+sudo cp scenario_b_legit_write.pcap /media/sf_OT-PCAPS/
 sudo cp scenario_c_attack_write.pcap /media/sf_OT-PCAPS/
 ```
 The PCAP files should now be accessible in the shared folder of the host computer. You can use these to upload them to Github or inspect them using Wireshark.
