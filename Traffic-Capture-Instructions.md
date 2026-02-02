@@ -12,7 +12,8 @@
 
 ## Scenario A: Baseline
 
-Run the baseline scenario (https://github.com/behan101/OT-asset-inventory/blob/main/OpenPLC-Deployment.md#scenario-a--normal-operations-baseline). Start the packet capture:
+Run the baseline scenario (https://github.com/behan101/OT-asset-inventory/blob/main/OpenPLC-Deployment.md#scenario-a--normal-operations-baseline). Before starting tcpdump, confirm the PLC server and SCADA polling script are active.
+Start the packet capture:
 ```bash
 sudo tcpdump -i any port 502 -w scenario_a_baseline.pcap
 ```
@@ -109,7 +110,7 @@ python polling_client.py
 ```
 
 Confirm the output:
-```bash
+```text
 SCADA Poll: [100, 100, 100, 100, 100]
 ```
 
@@ -142,11 +143,11 @@ In another terminal:
 ~/ot-venv/bin/python modbus_client.py
 ```
 Watch SCADA output change:
-```bash
+```text
 SCADA Poll: [100, 120, 100, 100, 100]
 ```
 or
-```bash
+```text
 SCADA Poll: [100, 999, 100, 100, 100]
 ```
 
@@ -219,7 +220,7 @@ Then open Virtualbox and select your Ubuntu Server OT VM:
 - Go to Shared Folders
 - Add a folder
 
-Configure the Shared Folder by giving the proper Folder Path on your host machine (C:\OT-PCAPs for example). Under Folder Name, write `OT-PCAPS`. Check Auto-mount and Make Permanent.
+Configure the Shared Folder by giving the proper Folder Path on your host machine (C:\OT-PCAPS for example). Under Folder Name, write `OT-PCAPS`. Check Auto-mount and Make Permanent.
 
 ---
 
@@ -261,7 +262,7 @@ The PCAP files should now be accessible in the shared folder of the host compute
 
 # Terminal Layout
 
-You should have three terminals running:
+You should have three to four terminals running:
 
 - Terminal 1: PLC Server (modbus_server.py)
 - Terminal 2: SCADA Polling (polling_client.py)
