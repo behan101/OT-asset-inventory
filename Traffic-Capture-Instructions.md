@@ -1,19 +1,38 @@
 # Index
 - [Capture Traffic for Each Scenario](#capture-traffic-for-each-scenario)
-- [Scenario A: Baseline]()
+- [Scenario A: Baseline](#scenario-a-basline)
 - [Full State Reset + Re-Capture](#full-state-reset--re-capture)
-- [Captured Traffic Scenarios]()
+- [Captured Traffic Scenarios](#captured-traffic-scenarios)
 
 # Capture Traffic for Each Scenario
 
-## Scenario A: Basline
+## Scenario A: Baseline
 
 Run the baseline scenario (https://github.com/behan101/OT-asset-inventory/blob/main/OpenPLC-Deployment.md#scenario-a--normal-operations-baseline).
 ```bash
 sudo tcpdump -i any port 502 -w scenario_a_baseline.pcap
 ```
+Remember to let the SCADA (polling_client.py) run for 2-3 minutes in seperate terminal other than the modbus_server. Do this before capturing traffic. After a few minutes of capturing traffic, stop pcap captures with `CTRL+C` in the terminal running tcpdump.
 
-Let SCADA (polling_client.py) run for 2-3 minutes in seperate terminal other than the modbus_server and then close the process with `CTRL+C`.
+---
+
+## Scenario B: Operator Activity (Legitimate Write)
+
+After running scenario A, edit the modbus_client.py to run scenario B. Run the script once, then in the tcpdump terminal, capture packets using:
+```bash
+sudo tcpdump -i any port 502 -w scenario_b_legitwrite.pcap
+```
+After a few minutes of capturing traffic, close the operation with `CTRL+C` in the tcpdump terminal.
+
+---
+
+## Scenario C: Attack Simulation (Unauthorizerd Write)
+
+After running scenario B, edit the modbus_client.py to run scenario C. Run the script once, then in the tcpdump terminal, capture packets using:
+```bash
+sudo tcpdump -i any port 502 -w scenario_c_attack_write.pcap
+```
+After a few minutes of capturing traffic, close the operation with `CTRL+C` in the tcpdump terminal.
 
 ---
 
@@ -132,3 +151,53 @@ Description:
 Expected Behavior:
 - One Modbus function code 06
 - Followed by function code 03 polling
+
+---
+
+# Viewing PCAP Files
+
+GitHub cannot preview `.pcap` files directly.
+
+To inspect the captured traffic:
+
+1. Download the file from the `pcaps/` directory
+2. Open it locally using Wireshark:
+
+---
+
+# Local VM (OT VM) Shared Folder to Host
+
+## Step 1: Create / Mount Shared Folder
+In order to open the packet captures from the local VM, I recommend using a shared folder from the host machine to the local VM. If using VirtualBox, create a folder somewhere on your host machine such as `C:\OT-PCAPS`.
+Then open Virtualbox and select your Ubuntu Server OT VM:
+- Click settings
+- Go to Shared Folders
+- Add a folder
+
+Configure the Shared Folder by giving the proper Folder Path on your host machine (C:\OT-PCAPs for example). Under Folder Name, write `OT-PCAPS`. Check Auto-mount and Make Permanent.
+
+---
+
+## Step 2: Install VirtualBox Guest Additions
+
+While logged on in the OT VM Ubuntu Server, run an update and install VirtualBox Guest Utilities.
+```bash
+sudo apt update
+sudo apt install virtualbox-guest-utils -y
+```
+Then reboot the server:
+```bash
+sudo reboot
+```
+
+---
+
+## Step 3: Verify the Shared Folder is Mounted
+
+After the reboot, login to the terminal and check to see if the folder is mounted properly:
+```bash
+sudo ls /media
+```
+You should see a folder named `sf_OT-PCAPS`.
+
+---
