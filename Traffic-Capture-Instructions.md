@@ -46,7 +46,7 @@ After 30 seconds of capturing traffic, including the write, close the operation 
 
 # Full State Reset + Re-Capture
 
-If the scenario is misconfigured, use this method to reset the state and re-run the scenario for the another clean capture.
+If the scenario is misconfigured, use this method to reset the state and re-run the scenario for another clean capture.
 
 ## Step 1: Stop all processes
 In all terminals, press `CTRL+C` to stop all processes.
@@ -58,6 +58,7 @@ Stop:
 - tcpdump (if running)
 
 ## Step 2: Reset PLC state (Registers)
+Restarting the server reinitializes all registers back to their default values.
 ```bash
 sudo ~/ot-venv/bin/python modbus_server.py
 ```
@@ -219,3 +220,16 @@ sudo cp scenario_b_legitwrite.pcap /media/sf_OT-PCAPS/
 sudo cp scenario_c_attack_write.pcap /media/sf_OT-PCAPS/
 ```
 The PCAP files should now be accessible in the shared folder of the host computer. You can use these to upload them to Github or inspect them using Wireshark.
+
+---
+
+# Terminal Layout
+
+You should have three terminals running:
+
+Terminal 1: PLC Server (modbus_server.py)
+Terminal 2: SCADA Polling (polling_client.py)
+Terminal 3: Packet Capture (tcpdump)
+Terminal 4 (optional): HMI Write Trigger (modbus_client.py)
+
+---
