@@ -1,8 +1,12 @@
 # Index
 - [Capture Traffic for Each Scenario](#capture-traffic-for-each-scenario)
 - [Scenario A: Baseline](#scenario-a-basline)
+- [Scenario B: Operator Activity (Legitimate Write)](#scenario-b-operator-activity-legitimate-write)
+- [Scenario C: Attack Simulation (Unauthorized Write)](#scenario-c-attack-simulation-unauthorizerd-write)
 - [Full State Reset + Re-Capture](#full-state-reset--re-capture)
 - [Captured Traffic Scenarios](#captured-traffic-scenarios)
+- [Viewing PCAP Files](#viewing-pcap-files)
+- [Local VM (OT VM) Shared Folder to Host](#local-vm-ot-vm-shared-folder-to-host)
 
 # Capture Traffic for Each Scenario
 
@@ -201,3 +205,13 @@ sudo ls /media
 You should see a folder named `sf_OT-PCAPS`.
 
 ---
+
+## Step 4: Copy PCAP files into the Shared Folder
+
+Copy the scenario PCAPS:
+```bash
+sudo cp scenario_a_baseline.pcap /media/sf_ot-pcaps/
+sudo cp scenario_b_operator_write.pcap /media/sf_ot-pcaps/
+sudo cp scenario_c_attack_write.pcap /media/sf_ot-pcaps/
+```
+The PCAP files should now be accessible in the shared folder of the host computer. You can use these to upload them to Github or inspect them using Wireshark.
