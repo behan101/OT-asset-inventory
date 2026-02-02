@@ -227,9 +227,9 @@ The PCAP files should now be accessible in the shared folder of the host compute
 
 You should have three terminals running:
 
-Terminal 1: PLC Server (modbus_server.py)
-Terminal 2: SCADA Polling (polling_client.py)
-Terminal 3: Packet Capture (tcpdump)
-Terminal 4 (optional): HMI Write Trigger (modbus_client.py)
+- Terminal 1: PLC Server (modbus_server.py)
+- Terminal 2: SCADA Polling (polling_client.py)
+- Terminal 3: Packet Capture (tcpdump)
+- Terminal 4 (optional): HMI Write Trigger (modbus_client.py)
 
 ---
