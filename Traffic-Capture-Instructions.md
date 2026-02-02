@@ -207,7 +207,7 @@ GitHub cannot preview `.pcap` files directly.
 To inspect the captured traffic:
 
 1. Download the file from the `pcaps/` directory
-2. Open it locally using Wireshark:
+2. Open it locally using Wireshark.
 
 ---
 
