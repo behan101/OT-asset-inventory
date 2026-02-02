@@ -1,6 +1,6 @@
 # Index
 - [Capture Traffic for Each Scenario](#capture-traffic-for-each-scenario)
-- [Scenario A: Baseline](#scenario-a-basline)
+- [Scenario A: Baseline](#scenario-a-baseline)
 - [Scenario B: Operator Activity (Legitimate Write)](#scenario-b-operator-activity-legitimate-write)
 - [Scenario C: Attack Simulation (Unauthorized Write)](#scenario-c-attack-simulation-unauthorizerd-write)
 - [Full State Reset + Re-Capture](#full-state-reset--re-capture)
