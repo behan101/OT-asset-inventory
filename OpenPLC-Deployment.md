@@ -51,7 +51,7 @@ This document covers only the **OT-side deployment and traffic simulation**.
 * pip: 24.x
 * pymodbus: 3.12.x
 
-Note: API changes may affect compatibility. Refer to the pymodbus API change log for updates (https://pymodbus.readthedocs.io/en/latest/source/api_changes.html).
+Note: API changes may affect compatibility. Refer to the pymodbus API change log for updates: (https://pymodbus.readthedocs.io/en/latest/source/api_changes.html).
 
 ---
 
@@ -178,7 +178,7 @@ Open a third terminal (`CTRL+ALT+F3`) and activate the venv:
 source ~/ot-venv/bin/activate
 ```
 
-Create the polling client:
+Create the SCADA polling script:
 
 ```bash
 nano polling_client.py
@@ -228,7 +228,7 @@ sudo ~/ot-venv/bin/python modbus_server.py
 ```
 2. Start the SCADA polling client (`polling_client.py`) in different terminal:
 ```bash
-sudo ~/ot-venv/bin/python modbus_client.py
+python polling_client.py
 ```
 3. Let it run for 2–5 minutes
 4. Do **not** run the HMI script.
@@ -269,7 +269,7 @@ client.write_register(1, 120)
 Run the script once:
 
 ```bash
-sudo ~/ot-venv/bin/python modbus_client.py
+~/ot-venv/bin/python modbus_client.py
 ```
 
 **What this simulates**:
@@ -296,7 +296,7 @@ python polling_client.py
 ```
 Then run the HMI Script once:
 ```bash
-sudo ~/ot-venv/bin/python modbus_client.py
+~/ot-venv/bin/python modbus_client.py
 ```
 **Expected HMI output**:
 ```bash
@@ -323,7 +323,7 @@ You can simply comment out the legitimate operator value and remove the hash `#`
 Run the script once:
 
 ```bash
-sudo ~/ot-venv/bin/python modbus_client.py
+~/ot-venv/bin/python modbus_client.py
 ```
 
 **What this simulates**:
@@ -354,7 +354,7 @@ Copy the script `noisy_client.py` (https://github.com/behan101/OT-asset-inventor
 Run:
 
 ```bash
-sudo ~/ot-venv/bin/python noisy_client.py
+~/ot-venv/bin/python noisy_client.py
 ```
 
 **What this simulates**:
