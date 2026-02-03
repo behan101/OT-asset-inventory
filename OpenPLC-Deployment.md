@@ -192,10 +192,10 @@ Run the SCADA client:
 python polling_client.py
 ```
 
-If the script does not run, try using the following command to ensure the virtual environment and proper privileges are running:
+If the script does not run, make sure you are in the proper virtual environment before executing the command. If your ot-venv virtual environment isn't activated, use the following command to do so:
 
 ```bash
-sudo ~/ot-venv/bin/python polling_client.py
+source ~/ot-venv/bin/activate
 ```
 
 You should see repeated output every three seconds:
@@ -226,7 +226,7 @@ Although all components run on one VM, they are treated as independent OT assets
 ```bash
 sudo ~/ot-venv/bin/python modbus_server.py
 ```
-2. Start the SCADA polling client (`polling_client.py`) in different terminal:
+2. Start the SCADA polling client (`polling_client.py`) in different terminal. Be sure to be working in the proper virtual environment `/ot-venv/` before running the polling script:
 ```bash
 python polling_client.py
 ```
@@ -334,7 +334,7 @@ Run the script once:
 
 **Expected SCADA output**:
 
-```
+```text
 SCADA Poll: [100, 999, 100, 100, 100]
 ```
 
