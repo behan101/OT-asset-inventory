@@ -372,4 +372,6 @@ Now that the scenarios are proven to be working properly, we can move on to pack
 sudo apt install tcpdump -y
 ```
 
+You are now ready to capture Modbus traffic for Scenarios A-D. Refer to https://github.com/behan101/OT-asset-inventory/blob/main/Traffic-Capture-Instructions.md
+
 ---
