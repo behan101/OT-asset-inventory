@@ -5,9 +5,9 @@
 - [Overview](#overview)
 - [Captured Scenarios](#captured-scenarios)
 - [Modbus Protocol Background](#modbus-protocol-background)
-- [Scenario A: Baseline Polling](#scenario-a--baseline-polling)
-- [Scenario B: Legitimate Operator Write](#scenario-b--legitimate-operator-write)
-- [Scenario C: Unauthorized Write Attack](#scenario-c--unauthorized-write-attack)
+- [Scenario A: Baseline Polling](#scenario-a-baseline-polling)
+- [Scenario B: Legitimate Operator Write](#scenario-b-legitimate-operator-write)
+- [Scenario C: Unauthorized Write Attack](#scenario-c-unauthorized-write-attack)
 - [Comparative Summary](#comparative-summary)
 - [Detection Engineering Value](#detection-engineering-value)
 
