@@ -5,13 +5,11 @@
 - [Overview](#overview)
 - [Captured Scenarios](#captured-scenarios)
 - [Modbus Protocol Background](#modbus-protocol-background)
-- [Scenario A — Baseline Polling](#scenario-a--baseline-polling)
-- [Scenario B — Legitimate Operator Write](#scenario-b--legitimate-operator-write)
-- [Scenario C — Unauthorized Write Attack](#scenario-c--unauthorized-write-attack)
+- [Scenario A: Baseline Polling](#scenario-a--baseline-polling)
+- [Scenario B: Legitimate Operator Write](#scenario-b--legitimate-operator-write)
+- [Scenario C: Unauthorized Write Attack](#scenario-c--unauthorized-write-attack)
 - [Comparative Summary](#comparative-summary)
 - [Detection Engineering Value](#detection-engineering-value)
-- [Recommended Wireshark Evidence](#recommended-wireshark-evidence)
-- [Next Steps](#next-steps)
 
 ---
 
@@ -70,7 +68,7 @@ The most relevant function codes in this project are:
 
 ---
 
-# Scenario A — Baseline Polling
+# Scenario A: Baseline Polling
 
 ## Description
 
@@ -95,3 +93,118 @@ Apply the following filter:
 ```wireshark
 modbus.func_code == 3
 ```
+
+## Observed:
+- Repeated Read Holding Registers requests
+- No write operations present
+
+## Example SCADA Output:
+```text
+SCADA Poll: [100, 100, 100, 100, 100]
+```
+
+## Key Observation
+Baseline traffic is stable, repetitive, and read-only.
+
+---
+
+# Scenario B: Legitimate Operator Write
+
+## Description
+Scenario B simulates a legitimate operator adjusting a process value.
+The HMI performs a single authorized write:
+```py
+client.write_register(1, 120)
+```
+
+## Expected Behavior
+- One Modbus write (Function Code 06)
+- Register value changes from 100 → 120
+- SCADA continues normal polling afterward
+
+## Wireshark Validation
+Filter for write operations:
+```wireshark
+modbus.func_code == 6
+```
+
+## Observed:
+- A single Write Single Register request
+- Register address: 1
+- New value: 120
+
+SCADA output confirms the change:
+```text
+SCADA Poll: [100, 120, 100, 100, 100]
+```
+
+## Key Observation
+Operator writes are infrequent, intentional, and occur alongside normal polling.
+
+---
+
+# Scenario C: Unauthorized Write Attack
+
+## Description
+Scenario C simulates malicious or unauthorized manipulation of a PLC register.
+The attacker writes an unsafe value:
+```py
+client.write_register(1, 999)
+```
+
+## Expected Behavior
+- Function Code 06 write occurs
+- Value is abnormal compared to baseline
+- SCADA reflects unsafe process manipulation
+
+## Wireshark Validation
+Filter again:
+```wireshark
+modbus.func_code == 6
+```
+
+## Observed:
+- A Write Single Register request
+- Register address: 1
+- New Value: 999
+
+SCADA output:
+```text
+SCADA Poll: [100, 999, 100, 100, 100]
+```
+
+## Key Observation
+Attack traffic can appear identical to operator traffic at the protocol level.
+The difference is typically:
+- Abnormal written values
+- Unexpected source system
+- Unusual timing or frequency
+- Lack of authorization context
+
+---
+
+# Comparative Summary
+| Scenario | Function Codes Seen | Register Change? | Security Meaning                    |
+| -------- | ------------------- | ---------------- | ----------------------------------- |
+| A        | 03 only             | No               | Normal baseline polling             |
+| B        | 03 + one 06         | Yes (120)        | Legitimate operator control action  |
+| C        | 03 + one 06         | Yes (999)        | Unauthorized or unsafe manipulation |
+
+---
+
+# Detection Engineering Value
+This project highlights a core OT security challenge:
+- Modbus has no authentication or built-in access control.
+- Malicious writes look identical to legitimate writes.
+
+Therefore, OT SOC detection must rely on contextual monitoring such as:
+- Asset identity (who initiated the write?)
+- Value thresholds (what was written?)
+- Timing anomalies (when did it occur?)
+- Write frequency (how often are writes happening?)
+- Known-good engineering workstation behavior
+Potential detection strategies include:
+- Alert on any Function Code 06 in baseline environments
+- Alert when register writes exceed safe operational ranges
+- Alert when writes originate from unknown or unauthorized hosts
+- Alert on repeated write bursts (possible malware or rogue logic)
