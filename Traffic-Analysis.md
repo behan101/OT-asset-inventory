@@ -1,6 +1,6 @@
 # Traffic Analysis — Modbus OT Simulation
 
-# Index
+## Index
 
 - [Overview](#overview)
 - [Captured Scenarios](#captured-scenarios)
@@ -10,36 +10,40 @@
 - [Scenario C — Unauthorized Write Attack](#scenario-c--unauthorized-write-attack)
 - [Comparative Summary](#comparative-summary)
 - [Detection Engineering Value](#detection-engineering-value)
+- [Recommended Wireshark Evidence](#recommended-wireshark-evidence)
 - [Next Steps](#next-steps)
 
 ---
 
 # Overview
 
-This document analyzes packet captures generated from the OT simulation environment in this project.
+This document provides a structured analysis of Modbus TCP network traffic generated from the OT simulation environment in this project.
 
-The goal is to demonstrate how Modbus TCP traffic differs between:
+The objective is to demonstrate how Modbus traffic differs between:
 
-- Normal baseline polling
-- Legitimate operator control actions
-- Unauthorized or malicious register manipulation
+- Normal SCADA baseline polling  
+- Legitimate operator register writes  
+- Unauthorized or malicious register manipulation  
 
-These captures provide realistic OT network evidence that can be used for:
+These packet captures provide realistic OT protocol evidence that can be used for:
 
-- SOC alert development
-- Protocol-aware detection engineering
-- OT asset discovery validation
-- Incident response training
+- OT asset discovery validation  
+- Baseline behavior profiling  
+- Detection engineering development  
+- SOC alert testing and training  
+- Industrial incident response practice  
 
 ---
 
 # Captured Scenarios
 
-The following traffic captures were generated using `tcpdump`:
+Traffic was captured using `tcpdump` on port **502** (Modbus TCP).
+
+The following scenario-based captures were generated:
 
 | Scenario | File Name | Description |
 |---------|----------|-------------|
-| A | `scenario_a_baseline.pcap` | SCADA polling only (read traffic) |
+| A | `scenario_a_baseline.pcap` | Normal SCADA polling (read-only traffic) |
 | B | `scenario_b_legit_write.pcap` | Authorized operator write (value = 120) |
 | C | `scenario_c_attack_write.pcap` | Unauthorized write attack (value = 999) |
 
@@ -47,20 +51,22 @@ The following traffic captures were generated using `tcpdump`:
 
 # Modbus Protocol Background
 
-Modbus TCP is a common industrial protocol used for communication between:
+Modbus TCP is a widely used industrial communication protocol found in OT environments.
 
-- PLCs (controllers)
-- HMIs (operator interfaces)
-- SCADA systems (monitoring platforms)
+It is commonly used between:
 
-Modbus operates using function codes.
+- PLCs (Programmable Logic Controllers)  
+- HMIs (Human Machine Interfaces)  
+- SCADA systems (Supervisory Control and Data Acquisition)  
+
+Modbus traffic is composed of function codes, which define the requested operation.
 
 The most relevant function codes in this project are:
 
 | Function Code | Name | Meaning |
 |-------------|------|---------|
 | 03 | Read Holding Registers | Normal SCADA polling behavior |
-| 06 | Write Single Register | Operator action or malicious modification |
+| 06 | Write Single Register | Operator control action or malicious manipulation |
 
 ---
 
@@ -68,21 +74,24 @@ The most relevant function codes in this project are:
 
 ## Description
 
-Scenario A represents normal OT monitoring behavior:
+Scenario A represents normal industrial monitoring behavior:
 
-- SCADA continuously polls the PLC
-- No HMI writes occur
-- Register values remain constant
+- SCADA continuously polls the PLC  
+- No operator actions occur  
+- Register values remain constant  
+
+This traffic establishes a baseline for comparison.
 
 ## Expected Behavior
 
-- Only Modbus reads (Function Code 03)
-- Predictable polling interval
-- No process manipulation
+- Only Modbus reads (Function Code **03**)  
+- Predictable polling interval  
+- No register modifications  
 
 ## Wireshark Validation
 
-Apply this filter:
+Apply the following filter:
 
 ```wireshark
 modbus.func_code == 3
+```
