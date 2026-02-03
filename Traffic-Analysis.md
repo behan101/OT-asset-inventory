@@ -203,6 +203,7 @@ Therefore, OT SOC detection must rely on contextual monitoring such as:
 - Timing anomalies (when did it occur?)
 - Write frequency (how often are writes happening?)
 - Known-good engineering workstation behavior
+
 Potential detection strategies include:
 - Alert on any Function Code 06 in baseline environments
 - Alert when register writes exceed safe operational ranges
