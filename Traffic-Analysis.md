@@ -169,6 +169,9 @@ Filter again:
 modbus.func_code == 6
 ```
 
+<img width="2558" height="1381" alt="image" src="https://github.com/user-attachments/assets/a4112c2e-b5a0-4885-aa88-bc5bd8d5540e" />
+
+
 ## Observed:
 - A Write Single Register request
 - Register address: 1
