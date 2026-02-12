@@ -131,6 +131,9 @@ Filter for write operations:
 modbus.func_code == 6
 ```
 
+<img width="2558" height="1379" alt="image" src="https://github.com/user-attachments/assets/0f32d677-a77f-41f9-8f7b-517f9e025d5c" />
+
+
 ## Observed:
 - A single Write Single Register request
 - Register address: 1
