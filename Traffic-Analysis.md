@@ -94,6 +94,9 @@ Apply the following filter:
 modbus.func_code == 3
 ```
 
+<img width="2558" height="1376" alt="image" src="https://github.com/user-attachments/assets/f3764b8e-73fb-4807-a715-2dc3201ae147" />
+
+
 ## Observed:
 - Repeated Read Holding Registers requests
 - No write operations present
