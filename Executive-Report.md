@@ -62,7 +62,7 @@ Unauthorized writes pose **direct risk to physical processes**, potentially caus
 - Equipment damage  
 - Revenue loss  
 
-Without detection, these events can go unnoticed until process impact occurs.
+Without detection, these events can go unnoticed until process impact occurs. For a more detailed traffic analysis, see [Traffic-Analysis.md](https://github.com/behan101/OT-asset-inventory/blob/main/Traffic-Analysis.md).
 
 ---
 
@@ -88,7 +88,7 @@ Detections can be implemented using:
 - Zeek scripts  
 - SIEM analytics (correlating host + register changes)  
 
-Detailed detection examples live in `Detections.md`.
+Detailed detection examples live in [Detections.md](https://github.com/behan101/OT-asset-inventory/blob/main/Detections.md).
 
 ---
 
