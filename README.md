@@ -142,6 +142,11 @@ This approach aligns with NIST SP 800-82 and IEC 62443 guidance.
 
 ---
 
+## Executive Report
+For a high-level summary and risk assessment, see [Executive-Report.md](https://github.com/behan101/OT-asset-inventory/blob/main/Executive-Report.md).
+
+---
+
 ## Disclaimer
 
 This lab is for educational purposes only. No production OT systems were accessed, scanned, or impacted.
