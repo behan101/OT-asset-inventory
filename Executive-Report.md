@@ -1,200 +1,148 @@
-# OT Asset Inventory: Modbus Traffic Analysis & Risk Assessment Report
+# Executive Summary — OT Asset Inventory & Traffic Analysis
 
-## 1. Executive Summary
+## Project Background
 
-**Lab Title:** Hybrid OT Cybersecurity Lab (Azure + VirtualBox)
+Industrial control systems (ICS) and operational technology (OT) networks play a critical role in industrial processes. Unlike traditional IT systems, OT protocols (such as Modbus TCP) often lack built-in security features, making them difficult to monitor and protect with conventional security tools.
 
-**Objective:**
-Provide a concise summary of the lab scenario, goals, and outcomes. Describe what was tested, why it matters from an OT cybersecurity perspective, and the high-level results.
+This project simulates a realistic OT environment using an OpenPLC server, HMI client, and SCADA polling logic. It generates Modbus TCP traffic and analyzes behavior under:
 
-## **Key Takeaways:**
+- Baseline conditions  
+- Legitimate operator adjustments  
+- Unauthorized or malicious register writes  
 
-*
-*
-
----
-
-## 2. Lab Scope & Assumptions
-
-**In Scope:**
-
-* Simulated OT assets (PLC/HMI) hosted on local VirtualBox VM
-* IT/Security monitoring hosted on Azure VM
-* Modbus TCP communication
-* Asset inventory, monitoring, and detection activities
-
-**Out of Scope:**
-
-* Production PLCs or live industrial systems
-* Safety-instrumented systems (SIS)
-* Proprietary vendor firmware
-
-**Assumptions:**
-
-* Lab represents a simplified manufacturing OT environment
-* Availability and safety take precedence over confidentiality
+The goal is to evaluate OT traffic characteristics, identify detection opportunities, and frame SOC-relevant monitoring strategies.
 
 ---
 
-## 3. Architecture Overview
+## Key Findings
 
-**Environment Description:**
-Describe the hybrid IT/OT architecture, including segmentation and connectivity.
+### 1. Modbus TCP Is Cleartext and Protocol-Limited
 
-**Zones & Conduits (IEC 62443):**
+All traffic is unencrypted and unauthenticated:
 
-* IT Zone: Azure VM (Monitoring / SOC)
-* OT Zone: VirtualBox VM (Simulated PLC/HMI)
-* Conduit: VPN or SSH Port Forwarding
+- Function codes and register values are visible in transit  
+- No mechanism exists in the protocol for access control, authentication, or integrity protection  
+- SCADA polling (function code 03) is predictable and repetitive
 
-**Diagram:**
-*(Insert architecture diagram here)*
+These characteristics create inherent risk and visibility challenges.
 
----
+### 2. Legitimate vs Unauthorized Writes Use the Same Protocol
 
-## 4. Asset Inventory
+Both operator and malicious writes use:
 
-| Asset Name | Zone | IP Address | Protocol | Function | Criticality |
-| ---------- | ---- | ---------- | -------- | -------- | ----------- |
-|            | OT   |            | Modbus   |          | High        |
+- Function code 06 (Write Single Register)  
+- Same protocol structure  
+- Differ only in value semantics
 
-**Notes:**
+This means naive protocol detection cannot distinguish intent without context.
 
-* Explain asset criticality and availability requirements
+### 3. Baseline Behavior Is Key
 
----
+The baseline (read-only polling) traffic serves as the SOC baseline. Any deviation — especially writes — should trigger inspection or alerting. Establishing this baseline is critical to subsequent detection engineering.
 
-## 5. Threat Model & Risk Context
+### 4. OT Scripts Should Always Be Planned and Controlled
 
-**Relevant Threats:**
-
-* Unauthorized Modbus access
-* Excessive polling impacting availability
-* Lateral movement from IT to OT zone
-
-**MITRE ATT&CK for ICS Techniques:**
-
-* *(e.g., T0859 – Modify Controller Tasking)*
-
-**Operational Risk Considerations:**
-
-* Impact to availability and production
-* Safety implications
+The scenario scripts show how OT writes manifest on the wire and confirm how SCADA observes changes. While simulated, this mirrors real industrial control behavior.
 
 ---
 
-## 6. Baseline Behavior Analysis
+## Traffic Scenarios and Business Impact
 
-**Normal OT Traffic Characteristics:**
+| Scenario | Behavior | Business Impact |
+|----------|----------|-----------------|
+| Baseline (A) | Read polling | Low — system stable |
+| Legitimate Write (B) | Process value adjusted by operator | Medium — expected operation |
+| Unauthorized Write (C) | Malicious value injected | High — potential process disruption |
+| Noisy / Rogue (D) | Random writes | High — indicates malfunction or compromise |
 
-* Protocol: Modbus TCP
-* Polling frequency:
-* Approved source IPs:
+Unauthorized writes pose **direct risk to physical processes**, potentially causing:
 
-**Evidence:**
+- Safety events  
+- Operational outages  
+- Equipment damage  
+- Revenue loss  
 
-* PCAP screenshots
-* Wireshark filters used
-
----
-
-## 7. Detection & Investigation
-
-**Scenario Description:**
-Describe the simulated anomalous or malicious activity.
-
-**Detection Method:**
-
-* Tool(s) used (Wireshark, SIEM, firewall logs)
-* Indicators observed
-
-**Timeline of Events:**
-
-| Time | Event | Evidence |
-| ---- | ----- | -------- |
+Without detection, these events can go unnoticed until process impact occurs.
 
 ---
 
-## 8. Findings
+## Detection Opportunities
 
-## **Summary of Findings:**
+Using the captured traffic and analysis, the following detection opportunities emerge:
 
-*
+### Detection 1 — Unexpected Write Operations
+Modbus Function Code 06 outside expected maintenance windows or from non-authorized hosts.
 
-**Severity Assessment:**
+### Detection 2 — Out-of-Range Write Values
+Write values beyond known good operational ranges (e.g., 999 in Scenario C).
 
-* Likelihood:
-* Impact:
-* Overall Risk Rating:
+### Detection 3 — Anomalous Write Frequency
+Multiple writes in short intervals may indicate noise, scripting failures, or malware.
 
----
+### Detection 4 — Unauthorized Source IP
+Writes from systems other than known HMI/Engineering stations.
 
-## 9. Remediation & Mitigation
+Detections can be implemented using:
 
-**Recommended Actions:**
+- Suricata IDS signatures  
+- Zeek scripts  
+- SIEM analytics (correlating host + register changes)  
 
-* Network segmentation changes
-* Access control restrictions
-* Monitoring improvements
-
-**Availability Validation:**
-
-* Describe how availability was confirmed after changes
+Detailed detection examples live in `Detections.md`.
 
 ---
 
-## 10. Lessons Learned
+## Recommendations
 
-## **What Worked Well:**
+### Technical Controls
 
-## **Challenges Encountered:**
+1. **Enforce segmentation between IT and OT**
+   - Use firewalls and VLANs
+   - Allow only expected Modbus flows
 
-## **Improvements for Future Iterations:**
+2. **Deploy passive OT monitoring**
+   - Zeek / Suricata sensors on the OT perimeter
+   - Monitor Modbus traffic flows
 
----
+3. **Define baseline process behavior**
+   - Document expected polling intervals
+   - Identify expected write patterns
 
-## 11. Mapping to OT Security Standards
+4. **Alert on anomalous command patterns**
+   - Trigger alerts for function 06 outside operator maintenance windows
+   - Correlate host identity with write actions
 
-**IEC 62443:**
+### Operational Controls
 
-* Zones & Conduits
-* Asset Identification
-* Access Control
+1. **Change management for PLC writes**
+   - All writes must be authorized and logged
 
-**NIST SP 800-82:**
+2. **Operator training**
+   - Ensure operators understand ramifications of register writes
 
-* Asset Inventory
-* Continuous Monitoring
-* Incident Response
-
----
-
-## 12. Conclusion
-
-Summarize how this lab demonstrates OT cybersecurity concepts including asset visibility, detection, availability-aware remediation, and cross-zone risk management.
-
----
-
-## 13. Appendix
-
-**Tools Used:**
-
-* Azure VM
-* VirtualBox
-* Wireshark
-* pymodbus
-
-**References:**
-
-* IEC 62443
-* NIST SP 800-82
+3. **Incident response readiness**
+   - Playbooks for detection → validation → remediation
 
 ---
 
-## Disclaimer
+## Conclusion
 
-This lab and report are for educational purposes only and do not represent a production OT environment.
+Modbus TCP provides critical visibility into industrial process networks but lacks inherent security controls. By simulating and capturing real Modbus traffic, this project demonstrates how:
+
+- Baseline traffic forms the foundation for detection
+- Malicious writes are detectable only through context and anomaly logic
+- SOC monitoring tools can be tuned for OT-specific threats
+
+This project stands as a reusable OT SOC reference, bridging protocol behavior to SOC alerting strategies.
 
 ---
 
-**Author:** Brad Han
+## Acknowledgements
+
+This project used:
+
+- OpenPLC v3
+- Python pymodbus
+- VirtualBox OT VM
+- tcpdump packet capture
+- Wireshark for analysis
