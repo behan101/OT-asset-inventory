@@ -132,6 +132,16 @@ This approach aligns with NIST SP 800-82 and IEC 62443 guidance.
 
 ---
 
+## Quick Start
+1. Deploy OT VM
+2. Run OpenPLC scripts
+3. Capture Mosbus traffic
+4. Analyze in Wireshark
+5. Upload PCAPs
+6. Review detections.md
+
+---
+
 ## Disclaimer
 
 This lab is for educational purposes only. No production OT systems were accessed, scanned, or impacted.
