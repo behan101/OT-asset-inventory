@@ -36,6 +36,7 @@ client.write_register(1, 120)
 ```bash
 sudo tcpdump -i any port 502 -w scenario_b_legit_write.pcap
 ```
+Remember to make sure SCADA is still polling before capturing.
 
 ---
 
@@ -66,6 +67,7 @@ client.write_register(1, 999)
 ```bash
 sudo tcpdump -i any port 502 -w scenario_c_attack_write.pcap
 ```
+Remember to make sure SCADA is still polling before capturing.
 
 ---
 
