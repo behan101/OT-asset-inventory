@@ -128,6 +128,7 @@ Copy the script `modbus_server.py` (https://github.com/behan101/OT-asset-invento
 Start the PLC server (privileged port 502):
 
 ```bash
+source ~/ot-venv/bin/activate
 sudo ~/ot-venv/bin/python modbus_server.py
 ```
 
@@ -224,6 +225,7 @@ Although all components run on one VM, they are treated as independent OT assets
 
 1. Start the PLC server (`modbus_server.py`) in terminal 1:
 ```bash
+source ~/ot-venv/bin/activate
 sudo ~/ot-venv/bin/python modbus_server.py
 ```
 2. Start the SCADA polling client (`polling_client.py`) in different terminal. Be sure to be working in the proper virtual environment `/ot-venv/` before running the polling script:
@@ -288,6 +290,7 @@ SCADA Poll: [100, 120, 100, 100, 100]
 Make sure the following are running:
 * Terminal 1 (PLC)
 ```bash
+source ~/ot-venv/bin/activate
 sudo ~/ot-venv/bin/python modbus_server.py
 ```
 * Terminal 3 (SCADA)
