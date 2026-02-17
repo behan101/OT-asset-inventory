@@ -190,6 +190,8 @@ The difference is typically:
 - Unusual timing or frequency
 - Lack of authorization context
 
+Detailed detection examples live in [Detections.md](https://github.com/behan101/OT-asset-inventory/blob/main/Detections.md).
+
 ---
 
 # Comparative Summary
