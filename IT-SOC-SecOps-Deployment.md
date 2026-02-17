@@ -116,7 +116,7 @@ Live monitoring can be added later as an enhancement.
 
 # Data Flow Design
 The data flow for this phase is as follows:
-
+```text
 OT VM
 │
 ├── tcpdump (port 502)
@@ -134,7 +134,7 @@ IT Analysis Environment
 ├── Wireshark Analysis
 ├── Zeek Parsing
 └── Detection Development
-
+```
 No inbound traffic is ever sent from IT to OT.
 
 ---
