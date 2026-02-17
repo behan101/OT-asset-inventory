@@ -12,6 +12,7 @@
 - [PCAP-Based Analysis vs Live Monitoring](#pcap-based-analysis-vs-live-monitoring)
 - [Future Live OT-to-SOC Integration](#future-live-ot-to-soc-integration)
 - [Project Boundaries and Assumptions](#project-boundaries-and-assumptions)
+- [Next Steps (Future Implementations)](#next-steps)
 
 ---
 
